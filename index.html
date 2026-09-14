@@ -478,16 +478,20 @@ const AVATAR_COLORS = ['#1A73E8','#DB6E12','#7C3AED','#0F9D58','#D93025','#00838
 const TYPE_LABEL = { dm: 'צ׳אט אישי', group: 'קבוצה', space: 'מרחב' };
 
 /* ===================== API (מחליף את google.script.run) ===================== */
-// חשוב: Content-Type נשאר text/plain כדי שהבקשה תישאר "simple request"
-// ולא תפעיל CORS preflight (Apps Script Web App לא יודע לענות ל-OPTIONS).
+// חשוב: משתמשים ב-GET עם query string ולא ב-POST עם גוף JSON.
+// הסיבה: script.google.com/.../exec מגיב תמיד בהפניית 302 לכתובת
+// googleusercontent.com הפנימית, ובהפניית 302 הדפדפן הופך POST ל-GET
+// וזורק את גוף הבקשה (כך זה מוגדר בתקן fetch) — כלומר ה-JSON שנשלח
+// בגוף הייתה פשוט אובדת בדרך. עם GET אין גוף שיכול ללכת לאיבוד.
 function callApi(action, params){
-  return fetch(APPS_SCRIPT_URL, {
-    method: 'POST',
-    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-    body: JSON.stringify({ action: action, params: params || [] })
-  })
-  .then(function(res){ return res.json(); })
-  .then(function(json){
+  const qs = 'action=' + encodeURIComponent(action) +
+             '&params=' + encodeURIComponent(JSON.stringify(params || []));
+  return fetch(APPS_SCRIPT_URL + '?' + qs, { method: 'GET', cache: 'no-store' })
+  .then(function(res){ return res.text(); })
+  .then(function(text){
+    let json;
+    try { json = JSON.parse(text); }
+    catch(e){ throw new Error('תשובה לא תקינה מהשרת (יתכן שהכתובת שגויה או שהפריסה לא ציבורית)'); }
     if(!json || !json.ok) throw new Error((json && json.error) || 'שגיאה לא ידועה מהשרת');
     return json.data;
   });
