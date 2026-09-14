@@ -1,0 +1,828 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>צ'אט</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+  <style>
+    :root{
+      --bg:#ffffff;
+      --panel:#F7F8FA;
+      --border:#E4E7EC;
+      --text:#1F2430;
+      --text-dim:#6B7280;
+      --text-faint:#98A1AF;
+      --hover:#EFF2F6;
+      --dm:#1A73E8;
+      --dm-bg:#EAF2FE;
+      --group:#DB6E12;
+      --group-bg:#FBEEE0;
+      --space:#7C3AED;
+      --space-bg:#F1EBFC;
+      --danger:#D93025;
+      --radius:14px;
+      --shadow:0 8px 24px rgba(20,25,40,.10);
+    }
+    *{box-sizing:border-box;}
+    html,body{height:100%;}
+    body{
+      margin:0;
+      font-family:'Rubik',Arial,sans-serif;
+      color:var(--text);
+      background:var(--bg);
+      direction:rtl;
+      overflow:hidden;
+    }
+    button{font-family:inherit;}
+    input,textarea{font-family:inherit;}
+    ::-webkit-scrollbar{width:8px;height:8px;}
+    ::-webkit-scrollbar-thumb{background:#D6DAE2;border-radius:8px;}
+    ::-webkit-scrollbar-thumb:hover{background:#C1C7D1;}
+
+    /* ---------- Login screen ---------- */
+    #loginScreen{
+      position:fixed; inset:0; display:flex; align-items:center; justify-content:center;
+      background:linear-gradient(160deg,#F4F7FD 0%,#EFEFFC 55%,#FBF3EE 100%);
+      z-index:100;
+    }
+    .login-card{
+      background:#fff; border-radius:24px; box-shadow:var(--shadow);
+      padding:48px 44px; width:360px; text-align:center;
+    }
+    .login-mark{
+      width:56px;height:56px;border-radius:16px;margin:0 auto 20px;
+      background:linear-gradient(135deg,var(--dm),var(--space));
+      display:flex;align-items:center;justify-content:center;
+    }
+    .login-mark svg{width:28px;height:28px;}
+    .login-card h1{font-size:22px;font-weight:700;margin:0 0 6px;}
+    .login-card p{color:var(--text-dim);font-size:14px;margin:0 0 28px;line-height:1.6;}
+    #gsiButtonHolder{display:flex;justify-content:center;}
+
+    /* ---------- App shell ---------- */
+    #app{display:none; height:100%; flex-direction:column;}
+    #app.ready{display:flex;}
+
+    header.topbar{
+      height:60px; flex:none; display:flex; align-items:center; gap:16px;
+      padding:0 20px; border-bottom:1px solid var(--border); background:#fff;
+    }
+    .brand{display:flex;align-items:center;gap:10px;font-weight:700;font-size:17px;white-space:nowrap;}
+    .brand-mark{
+      width:32px;height:32px;border-radius:9px;flex:none;
+      background:linear-gradient(135deg,var(--dm),var(--space));
+      display:flex;align-items:center;justify-content:center;
+    }
+    .brand-mark svg{width:18px;height:18px;}
+    .search-wrap{flex:1;max-width:520px;position:relative;}
+    .search-wrap svg{position:absolute;top:50%;right:14px;transform:translateY(-50%);color:var(--text-faint);}
+    .search-wrap input{
+      width:100%; height:40px; border-radius:20px; border:1px solid var(--border);
+      background:var(--panel); padding:0 42px 0 16px; font-size:14px; color:var(--text); outline:none;
+      transition:border-color .15s, background .15s;
+    }
+    .search-wrap input:focus{background:#fff;border-color:var(--dm);}
+    .me-avatar{
+      width:36px;height:36px;border-radius:50%;flex:none;cursor:pointer;object-fit:cover;
+      border:2px solid transparent;
+    }
+    .me-avatar:hover{border-color:var(--border);}
+    .me-menu-wrap{position:relative;}
+    .me-menu{
+      position:absolute; left:0; top:46px; background:#fff; border:1px solid var(--border);
+      border-radius:12px; box-shadow:var(--shadow); width:220px; display:none; overflow:hidden; z-index:50;
+    }
+    .me-menu.open{display:block;}
+    .me-menu .who{padding:14px 16px;border-bottom:1px solid var(--border);}
+    .me-menu .who b{display:block;font-size:14px;}
+    .me-menu .who span{font-size:12px;color:var(--text-dim);}
+    .me-menu button{
+      width:100%; text-align:right; background:none; border:none; padding:12px 16px;
+      font-size:14px; cursor:pointer; color:var(--danger); display:flex; align-items:center; gap:8px;
+    }
+    .me-menu button:hover{background:var(--hover);}
+
+    .body-row{flex:1; display:flex; min-height:0;}
+
+    /* ---------- Sidebar ---------- */
+    aside.sidebar{
+      width:300px; flex:none; background:var(--panel); border-left:1px solid var(--border);
+      display:flex; flex-direction:column; overflow-y:auto; padding:10px 10px 20px;
+    }
+    .nav-home{
+      display:flex; align-items:center; gap:10px; padding:11px 12px; border-radius:10px;
+      font-weight:600; font-size:14px; cursor:pointer; color:var(--text); margin-bottom:6px;
+    }
+    .nav-home svg{color:var(--text-dim);flex:none;}
+    .nav-home:hover{background:var(--hover);}
+    .nav-home.active{background:var(--dm-bg); color:var(--dm);}
+    .nav-home.active svg{color:var(--dm);}
+
+    .section{margin-top:8px;}
+    .section-head{
+      display:flex; align-items:center; justify-content:space-between; padding:8px 10px 6px;
+      color:var(--text-dim); font-size:12px; font-weight:600; letter-spacing:.2px;
+    }
+    .section-head button{
+      width:22px;height:22px;border-radius:50%;border:none;background:transparent;color:var(--text-dim);
+      cursor:pointer; display:flex; align-items:center; justify-content:center;
+    }
+    .section-head button:hover{background:#E2E6EC;color:var(--text);}
+
+    .conv-item{
+      display:flex; align-items:center; gap:10px; padding:9px 10px; border-radius:10px;
+      cursor:pointer; position:relative;
+    }
+    .conv-item:hover{background:var(--hover);}
+    .conv-item.active{background:#fff; box-shadow:0 0 0 1px var(--border) inset;}
+    .conv-avatar{
+      width:38px;height:38px;border-radius:50%;flex:none;display:flex;align-items:center;justify-content:center;
+      font-size:14px;font-weight:600;color:#fff;object-fit:cover;
+    }
+    .conv-avatar img{width:100%;height:100%;border-radius:50%;object-fit:cover;}
+    .conv-meta{flex:1;min-width:0;}
+    .conv-top-row{display:flex;justify-content:space-between;align-items:baseline;gap:6px;}
+    .conv-name{font-size:13.5px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+    .conv-time{font-size:11px;color:var(--text-faint);flex:none;}
+    .conv-preview{font-size:12.5px;color:var(--text-dim);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+    .conv-item.unread .conv-name{color:var(--text);}
+    .conv-item.unread .conv-preview{color:var(--text);font-weight:500;}
+    .unread-dot{
+      min-width:18px;height:18px;padding:0 5px;border-radius:9px;background:var(--dm);color:#fff;
+      font-size:10.5px;font-weight:700;display:flex;align-items:center;justify-content:center;flex:none;
+    }
+    .empty-hint{padding:10px 12px;font-size:12.5px;color:var(--text-faint);line-height:1.6;}
+
+    /* ---------- Main area ---------- */
+    main.main{flex:1; display:flex; flex-direction:column; min-width:0; background:#fff;}
+
+    .home-view{flex:1;overflow-y:auto;padding:28px 34px;}
+    .home-greet h2{font-size:22px;margin:0 0 2px;}
+    .home-greet p{color:var(--text-dim);font-size:14px;margin:0 0 26px;}
+    .home-list .conv-item{padding:12px;}
+    .home-list .conv-avatar{width:46px;height:46px;font-size:16px;}
+    .home-list .conv-name{font-size:14.5px;}
+    .home-list .conv-preview{font-size:13px;}
+
+    .empty-state{
+      flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center;
+      color:var(--text-dim); gap:14px; padding:20px; text-align:center;
+    }
+    .empty-state svg{color:#D6DAE2;}
+    .empty-state h3{margin:0;color:var(--text);font-size:16px;}
+    .empty-state p{margin:0;font-size:13.5px;max-width:280px;line-height:1.6;}
+
+    .chat-header{
+      height:64px; flex:none; display:flex; align-items:center; gap:12px; padding:0 20px;
+      border-bottom:1px solid var(--border);
+    }
+    #backBtn{display:none;background:none;border:none;cursor:pointer;color:var(--text-dim);}
+    .chat-header .conv-avatar{width:38px;height:38px;font-size:14px;}
+    .chat-header .titles{min-width:0;}
+    .chat-header .titles b{display:block;font-size:15px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+    .chat-header .titles span{font-size:12px;color:var(--text-dim);}
+
+    .messages{flex:1; overflow-y:auto; padding:20px 24px; display:flex; flex-direction:column; gap:2px;}
+    .day-sep{align-self:center;font-size:11.5px;color:var(--text-faint);background:var(--panel);padding:4px 12px;border-radius:12px;margin:14px 0;}
+    .msg-row{display:flex; gap:8px; max-width:66%; margin:3px 0;}
+    .msg-row.own{justify-content:flex-start; align-self:flex-start; flex-direction:row-reverse;}
+    .msg-row.other{justify-content:flex-start; align-self:flex-end;}
+    .msg-avatar{width:26px;height:26px;border-radius:50%;flex:none;margin-top:auto;font-size:11px;font-weight:600;color:#fff;display:flex;align-items:center;justify-content:center;}
+    .msg-avatar img{width:100%;height:100%;border-radius:50%;object-fit:cover;}
+    .msg-avatar.spacer{visibility:hidden;}
+    .msg-bubble{padding:9px 13px;border-radius:16px;font-size:14px;line-height:1.5;position:relative;word-break:break-word;white-space:pre-wrap;}
+    .msg-row.own .msg-bubble{background:var(--dm);color:#fff;border-bottom-left-radius:4px;}
+    .msg-row.other .msg-bubble{background:var(--panel);color:var(--text);border-bottom-right-radius:4px;}
+    .msg-sender{font-size:11.5px;font-weight:600;color:var(--space);margin:0 0 2px 2px;}
+    .msg-time{font-size:10px;color:var(--text-faint);margin-top:3px;}
+    .msg-row.own .msg-time{text-align:left;color:rgba(255,255,255,.75);}
+
+    .composer{flex:none; border-top:1px solid var(--border); padding:14px 20px; display:flex; align-items:flex-end; gap:10px;}
+    .composer textarea{
+      flex:1; resize:none; border:1px solid var(--border); border-radius:20px; padding:11px 16px;
+      font-size:14px; max-height:120px; outline:none; line-height:1.4;
+    }
+    .composer textarea:focus{border-color:var(--dm);}
+    .send-btn{
+      width:42px;height:42px;border-radius:50%;border:none;background:var(--dm);color:#fff;
+      display:flex;align-items:center;justify-content:center;cursor:pointer;flex:none;transition:opacity .15s;
+    }
+    .send-btn:disabled{opacity:.4;cursor:default;}
+    .send-btn:not(:disabled):hover{opacity:.88;}
+
+    /* ---------- Modal ---------- */
+    .overlay{position:fixed;inset:0;background:rgba(20,25,40,.42);display:none;align-items:center;justify-content:center;z-index:80;}
+    .overlay.open{display:flex;}
+    .modal{background:#fff;border-radius:18px;width:420px;max-width:92vw;max-height:86vh;display:flex;flex-direction:column;box-shadow:var(--shadow);}
+    .modal-head{padding:18px 20px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;}
+    .modal-head h3{margin:0;font-size:16px;}
+    .modal-head button{background:none;border:none;cursor:pointer;color:var(--text-dim);padding:4px;}
+    .modal-body{padding:18px 20px;overflow-y:auto;}
+    .field{margin-bottom:16px;}
+    .field label{display:block;font-size:12.5px;font-weight:600;color:var(--text-dim);margin-bottom:6px;}
+    .field input,.field textarea{
+      width:100%;border:1px solid var(--border);border-radius:10px;padding:10px 12px;font-size:14px;outline:none;
+    }
+    .field input:focus,.field textarea:focus{border-color:var(--dm);}
+    .chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;}
+    .chip{
+      display:flex;align-items:center;gap:6px;background:var(--dm-bg);color:var(--dm);
+      padding:5px 8px 5px 10px;border-radius:16px;font-size:12.5px;font-weight:500;
+    }
+    .chip button{background:none;border:none;cursor:pointer;color:var(--dm);display:flex;padding:0;}
+    .user-results{border:1px solid var(--border);border-radius:10px;margin-top:8px;max-height:160px;overflow-y:auto;}
+    .user-result{display:flex;align-items:center;gap:10px;padding:9px 12px;cursor:pointer;}
+    .user-result:hover{background:var(--hover);}
+    .user-result .conv-avatar{width:30px;height:30px;font-size:12px;}
+    .user-result .nm{font-size:13.5px;font-weight:500;}
+    .user-result .em{font-size:11.5px;color:var(--text-dim);}
+    .modal-foot{padding:16px 20px;border-top:1px solid var(--border);display:flex;justify-content:flex-start;gap:10px;}
+    .btn{border:none;border-radius:10px;padding:10px 20px;font-size:14px;font-weight:600;cursor:pointer;}
+    .btn-primary{background:var(--dm);color:#fff;}
+    .btn-primary:disabled{opacity:.45;cursor:default;}
+    .btn-ghost{background:var(--panel);color:var(--text);}
+
+    /* ---------- Responsive ---------- */
+    @media (max-width: 760px){
+      aside.sidebar{position:absolute; inset:60px 0 0 0; width:100%; z-index:10;}
+      #app.chat-open aside.sidebar{display:none;}
+      #app:not(.chat-open) main.main{display:none;}
+      #backBtn{display:flex;}
+      .msg-row{max-width:82%;}
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ============ LOGIN ============ -->
+  <div id="loginScreen">
+    <div class="login-card">
+      <div class="login-mark">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M4 5h16a1 1 0 011 1v9a1 1 0 01-1 1H9l-5 4v-4H4a1 1 0 01-1-1V6a1 1 0 011-1z" fill="#fff"/></svg>
+      </div>
+      <h1>ברוכים הבאים</h1>
+      <p>מתחברים עם חשבון גוגל כדי לפתוח את הצ'אטים, הקבוצות והמרחבים שלכם.</p>
+      <div id="gsiButtonHolder"></div>
+    </div>
+  </div>
+
+  <!-- ============ APP ============ -->
+  <div id="app">
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-mark">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M4 5h16a1 1 0 011 1v9a1 1 0 01-1 1H9l-5 4v-4H4a1 1 0 01-1-1V6a1 1 0 011-1z" fill="#fff"/></svg>
+        </div>
+        <span>צ'אט</span>
+      </div>
+      <div class="search-wrap">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+        <input id="searchInput" type="text" placeholder="חיפוש בצ'אטים ובאנשים">
+      </div>
+      <div class="me-menu-wrap">
+        <img id="meAvatar" class="me-avatar" src="" alt="">
+        <div class="me-menu" id="meMenu">
+          <div class="who"><b id="meName"></b><span id="meEmail"></span></div>
+          <button id="signOutBtn">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/></svg>
+            התנתקות
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <div class="body-row">
+      <aside class="sidebar">
+        <div class="nav-home active" id="navHome">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/></svg>
+          בית
+        </div>
+
+        <div class="section" data-type="dm">
+          <div class="section-head">
+            <span>צ'אטים אישיים</span>
+            <button class="new-btn" data-type="dm" title="צ'אט חדש">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M12 5v14M5 12h14"/></svg>
+            </button>
+          </div>
+          <div class="section-list" id="listDm"></div>
+        </div>
+
+        <div class="section" data-type="group">
+          <div class="section-head">
+            <span>קבוצות</span>
+            <button class="new-btn" data-type="group" title="קבוצה חדשה">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M12 5v14M5 12h14"/></svg>
+            </button>
+          </div>
+          <div class="section-list" id="listGroup"></div>
+        </div>
+
+        <div class="section" data-type="space">
+          <div class="section-head">
+            <span>מרחבים</span>
+            <button class="new-btn" data-type="space" title="מרחב חדש">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M12 5v14M5 12h14"/></svg>
+            </button>
+          </div>
+          <div class="section-list" id="listSpace"></div>
+        </div>
+      </aside>
+
+      <main class="main">
+        <div class="home-view" id="homeView">
+          <div class="home-greet">
+            <h2>שלום, <span id="greetName"></span></h2>
+            <p>הנה כל השיחות שלך, מהעדכנית ביותר</p>
+          </div>
+          <div class="home-list" id="homeList"></div>
+        </div>
+
+        <div class="chat-header" id="chatHeader" style="display:none;">
+          <button id="backBtn">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+          </button>
+          <div class="conv-avatar" id="chatAvatar"></div>
+          <div class="titles">
+            <b id="chatTitle"></b>
+            <span id="chatSubtitle"></span>
+          </div>
+        </div>
+        <div class="messages" id="messagesEl" style="display:none;"></div>
+        <div class="composer" id="composer" style="display:none;">
+          <textarea id="msgInput" rows="1" placeholder="הקלד/י הודעה..."></textarea>
+          <button class="send-btn" id="sendBtn" disabled>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 2L11 13"/><path d="M22 2l-7 20-4-9-9-4 20-7z"/></svg>
+          </button>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <!-- ============ NEW CONVERSATION MODAL ============ -->
+  <div class="overlay" id="modalOverlay">
+    <div class="modal">
+      <div class="modal-head">
+        <h3 id="modalTitle">צ'אט חדש</h3>
+        <button id="modalClose">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="field" id="nameField" style="display:none;">
+          <label>שם</label>
+          <input id="spaceNameInput" type="text" placeholder="לדוגמה: צוות פיתוח">
+        </div>
+        <div class="field" id="descField" style="display:none;">
+          <label>תיאור (לא חובה)</label>
+          <input id="spaceDescInput" type="text" placeholder="במה עוסק המרחב הזה?">
+        </div>
+        <div class="field">
+          <label id="membersLabel">חיפוש איש קשר</label>
+          <input id="userSearchInput" type="text" placeholder="הקלד/י שם או אימייל">
+          <div class="user-results" id="userResults" style="display:none;"></div>
+          <div class="chips" id="selectedChips"></div>
+        </div>
+      </div>
+      <div class="modal-foot">
+        <button class="btn btn-primary" id="createBtn" disabled>יצירה</button>
+        <button class="btn btn-ghost" id="cancelBtn">ביטול</button>
+      </div>
+    </div>
+  </div>
+
+<script>
+/* ===================== CONFIG ===================== */
+const GOOGLE_CLIENT_ID = '426523025549-7c50rkn7cun4vmm2r802u0ij6egjehtg.apps.googleusercontent.com';
+// כתובת ה-Web App של Apps Script (Deploy > New deployment > Web app, Execute as: Me, Who has access: Anyone)
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby5NxYO9t8Pm4ZbJ-CTnczuZXN47kEaGxuUVAWaXN9RnZyfzYBrjHDN0RLQHh8Ze1s25Q/exec';
+const AVATAR_COLORS = ['#1A73E8','#DB6E12','#7C3AED','#0F9D58','#D93025','#00838F','#8E24AA','#5C6BC0'];
+const TYPE_LABEL = { dm: 'צ׳אט אישי', group: 'קבוצה', space: 'מרחב' };
+
+/* ===================== API (מחליף את google.script.run) ===================== */
+// חשוב: Content-Type נשאר text/plain כדי שהבקשה תישאר "simple request"
+// ולא תפעיל CORS preflight (Apps Script Web App לא יודע לענות ל-OPTIONS).
+function callApi(action, params){
+  return fetch(APPS_SCRIPT_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+    body: JSON.stringify({ action: action, params: params || [] })
+  })
+  .then(function(res){ return res.json(); })
+  .then(function(json){
+    if(!json || !json.ok) throw new Error((json && json.error) || 'שגיאה לא ידועה מהשרת');
+    return json.data;
+  });
+}
+function handleApiError(err){
+  console.error(err);
+  alert('שגיאה בתקשורת עם השרת:\n' + (err && err.message ? err.message : err));
+}
+
+/* ===================== STATE ===================== */
+let ME = null;                 // {email,name,picture}
+let SPACES = [];                // bootstrap list
+let ACTIVE_SPACE = null;        // spaceId
+let MESSAGES = [];              // currently open conversation messages
+let LAST_TS = 0;                // last message timestamp for polling
+let POLL_TIMER = null;
+let LIST_TIMER = null;
+let PENDING_TYPE = null;        // for modal
+let SELECTED_MEMBERS = [];      // for modal
+
+/* ===================== UTIL ===================== */
+function colorFor(str){
+  let h = 0;
+  for (let i=0;i<str.length;i++){ h = str.charCodeAt(i) + ((h<<5)-h); }
+  return AVATAR_COLORS[Math.abs(h) % AVATAR_COLORS.length];
+}
+function initials(name){
+  if(!name) return '?';
+  const parts = name.trim().split(' ');
+  return (parts[0][0] + (parts[1]?parts[1][0]:'')).toUpperCase();
+}
+function avatarNode(name, picture, size){
+  if(picture){
+    return '<img src="'+escapeHtml(picture)+'" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">';
+  }
+  return initials(name);
+}
+function escapeHtml(s){
+  return String(s||'').replace(/[&<>"']/g, function(c){
+    return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];
+  });
+}
+function timeLabel(ts){
+  if(!ts) return '';
+  const d = new Date(ts);
+  const now = new Date();
+  const sameDay = d.toDateString() === now.toDateString();
+  if (sameDay) return d.toLocaleTimeString('he-IL',{hour:'2-digit',minute:'2-digit'});
+  const yesterday = new Date(now); yesterday.setDate(now.getDate()-1);
+  if (d.toDateString() === yesterday.toDateString()) return 'אתמול';
+  return d.toLocaleDateString('he-IL',{day:'2-digit',month:'2-digit'});
+}
+function dayLabel(ts){
+  const d = new Date(ts);
+  const now = new Date();
+  if (d.toDateString() === now.toDateString()) return 'היום';
+  const yesterday = new Date(now); yesterday.setDate(now.getDate()-1);
+  if (d.toDateString() === yesterday.toDateString()) return 'אתמול';
+  return d.toLocaleDateString('he-IL',{day:'2-digit',month:'2-digit',year:'numeric'});
+}
+/* ===================== LOGIN ===================== */
+window.onload = function(){
+  google.accounts.id.initialize({
+    client_id: GOOGLE_CLIENT_ID,
+    callback: handleCredential
+  });
+  google.accounts.id.renderButton(document.getElementById('gsiButtonHolder'), {
+    theme:'outline', size:'large', shape:'pill', text:'signin_with', locale:'he'
+  });
+};
+
+function decodeJwt(token){
+  const payload = token.split('.')[1];
+  const json = decodeURIComponent(atob(payload.replace(/-/g,'+').replace(/_/g,'/'))
+    .split('').map(function(c){ return '%' + ('00'+c.charCodeAt(0).toString(16)).slice(-2); }).join(''));
+  return JSON.parse(json);
+}
+
+function handleCredential(resp){
+  const payload = decodeJwt(resp.credential);
+  const name = payload.name || payload.email;
+  const picture = payload.picture || '';
+  const email = payload.email;
+  callApi('upsertUser', [email, name, picture]).then(function(user){
+    ME = user;
+    document.getElementById('loginScreen').style.display = 'none';
+    document.getElementById('app').classList.add('ready');
+    document.getElementById('meAvatar').src = ME.picture || '';
+    document.getElementById('meName').textContent = ME.name;
+    document.getElementById('meEmail').textContent = ME.email;
+    document.getElementById('greetName').textContent = ME.name.split(' ')[0];
+    boot();
+  }).catch(handleApiError);
+}
+
+document.getElementById('meAvatar').addEventListener('click', function(){
+  document.getElementById('meMenu').classList.toggle('open');
+});
+document.addEventListener('click', function(e){
+  if(!e.target.closest('.me-menu-wrap')) document.getElementById('meMenu').classList.remove('open');
+});
+document.getElementById('signOutBtn').addEventListener('click', function(){
+  google.accounts.id.disableAutoSelect();
+  location.reload();
+});
+
+/* ===================== BOOTSTRAP / LISTS ===================== */
+function boot(){
+  refreshLists();
+  LIST_TIMER = setInterval(refreshLists, 8000);
+}
+
+function refreshLists(){
+  callApi('getBootstrap', [ME.email]).then(function(list){
+    SPACES = list;
+    renderSidebar();
+    if(!ACTIVE_SPACE) renderHome();
+  }).catch(handleApiError);
+}
+
+function renderSidebar(){
+  ['dm','group','space'].forEach(function(type){
+    const el = document.getElementById('list' + type.charAt(0).toUpperCase() + type.slice(1));
+    const items = SPACES.filter(function(s){ return s.type === type; });
+    if(items.length === 0){
+      el.innerHTML = '<div class="empty-hint">עדיין אין כאן כלום. אפשר להתחיל עם +</div>';
+      return;
+    }
+    el.innerHTML = items.map(convItemHtml).join('');
+  });
+  document.querySelectorAll('.conv-item').forEach(function(node){
+    node.addEventListener('click', function(){ openSpace(node.dataset.id); });
+  });
+}
+
+function convItemHtml(s){
+  const unread = s.unread > 0;
+  const preview = s.lastMessage ? escapeHtml(s.lastMessage.text) : 'אין הודעות עדיין';
+  return '<div class="conv-item '+(s.spaceId===ACTIVE_SPACE?'active ':'')+(unread?'unread':'')+'" data-id="'+s.spaceId+'">' +
+    '<div class="conv-avatar" style="background:'+colorFor(s.name||'?')+'">'+avatarNode(s.name, s.icon)+'</div>' +
+    '<div class="conv-meta">' +
+      '<div class="conv-top-row"><span class="conv-name">'+escapeHtml(s.name||'ללא שם')+'</span><span class="conv-time">'+timeLabel(s.updatedAt)+'</span></div>' +
+      '<div class="conv-top-row"><span class="conv-preview">'+preview+'</span>' + (unread?'<span class="unread-dot">'+s.unread+'</span>':'') + '</div>' +
+    '</div>' +
+  '</div>';
+}
+
+function renderHome(){
+  const list = SPACES.slice().sort(function(a,b){ return b.updatedAt - a.updatedAt; });
+  const el = document.getElementById('homeList');
+  if(list.length === 0){
+    el.innerHTML = '<div class="empty-state" style="padding:40px 0;">' +
+      '<svg width="52" height="52" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 5h16a1 1 0 011 1v9a1 1 0 01-1 1H9l-5 4v-4H4a1 1 0 01-1-1V6a1 1 0 011-1z"/></svg>' +
+      '<h3>עדיין שקט כאן</h3><p>אפשר להתחיל צ׳אט אישי, קבוצה או מרחב חדש מהתפריט בצד.</p>' +
+    '</div>';
+    return;
+  }
+  el.innerHTML = list.map(convItemHtml).join('');
+  el.querySelectorAll('.conv-item').forEach(function(node){
+    node.addEventListener('click', function(){ openSpace(node.dataset.id); });
+  });
+}
+
+document.getElementById('navHome').addEventListener('click', function(){
+  ACTIVE_SPACE = null;
+  clearInterval(POLL_TIMER);
+  document.getElementById('navHome').classList.add('active');
+  document.getElementById('homeView').style.display = 'block';
+  document.getElementById('chatHeader').style.display = 'none';
+  document.getElementById('messagesEl').style.display = 'none';
+  document.getElementById('composer').style.display = 'none';
+  document.getElementById('app').classList.remove('chat-open');
+  renderHome();
+  renderSidebar();
+});
+
+document.getElementById('backBtn').addEventListener('click', function(){
+  document.getElementById('navHome').click();
+});
+
+/* ===================== CHAT VIEW ===================== */
+function openSpace(spaceId){
+  ACTIVE_SPACE = spaceId;
+  const s = SPACES.find(function(x){ return x.spaceId === spaceId; });
+  if(!s) return;
+
+  document.getElementById('navHome').classList.remove('active');
+  document.getElementById('homeView').style.display = 'none';
+  document.getElementById('chatHeader').style.display = 'flex';
+  document.getElementById('messagesEl').style.display = 'flex';
+  document.getElementById('composer').style.display = 'flex';
+  document.getElementById('app').classList.add('chat-open');
+
+  document.getElementById('chatAvatar').style.background = colorFor(s.name||'?');
+  document.getElementById('chatAvatar').innerHTML = avatarNode(s.name, s.icon);
+  document.getElementById('chatTitle').textContent = s.name || 'ללא שם';
+  document.getElementById('chatSubtitle').textContent = s.type === 'dm' ? 'צ׳אט אישי' : (s.memberCount + ' חברים · ' + TYPE_LABEL[s.type]);
+
+  document.getElementById('messagesEl').innerHTML = '<div style="margin:auto;color:var(--text-faint);font-size:13px;">טוען הודעות...</div>';
+
+  renderSidebar();
+
+  callApi('getMessages', [spaceId, ME.email]).then(function(msgs){
+    MESSAGES = msgs;
+    LAST_TS = msgs.length ? msgs[msgs.length-1].timestamp : Date.now();
+    renderMessages();
+    refreshLists();
+  }).catch(handleApiError);
+
+  clearInterval(POLL_TIMER);
+  POLL_TIMER = setInterval(pollNewMessages, 3000);
+}
+
+function pollNewMessages(){
+  if(!ACTIVE_SPACE) return;
+  const spaceAtRequest = ACTIVE_SPACE;
+  callApi('pollMessages', [spaceAtRequest, LAST_TS]).then(function(msgs){
+    if(msgs.length && ACTIVE_SPACE === spaceAtRequest){
+      MESSAGES = MESSAGES.concat(msgs);
+      LAST_TS = msgs[msgs.length-1].timestamp;
+      renderMessages();
+      callApi('markRead', [spaceAtRequest, ME.email]).catch(handleApiError);
+    }
+  }).catch(handleApiError);
+}
+
+function renderMessages(){
+  const el = document.getElementById('messagesEl');
+  let html = '';
+  let lastDay = null;
+  let lastSender = null;
+  MESSAGES.forEach(function(m){
+    const day = dayLabel(m.timestamp);
+    if(day !== lastDay){ html += '<div class="day-sep">'+day+'</div>'; lastDay = day; lastSender = null; }
+    const own = m.senderEmail.toLowerCase() === ME.email.toLowerCase();
+    const showAvatar = !own && lastSender !== m.senderEmail;
+    lastSender = m.senderEmail;
+    const s = SPACES.find(function(x){return x.spaceId===ACTIVE_SPACE;});
+    const showName = !own && s && s.type !== 'dm';
+    html += '<div class="msg-row '+(own?'own':'other')+'">';
+    html += '<div>';
+    if(showName) html += '<div class="msg-sender">'+escapeHtml(m.senderName)+'</div>';
+    html += '<div class="msg-bubble">'+escapeHtml(m.text)+'<div class="msg-time">'+timeLabel(m.timestamp)+'</div></div>';
+    html += '</div>';
+    if(!own){
+      html += '<div class="msg-avatar" style="background:'+colorFor(m.senderName||'?')+'">' + (showAvatar ? avatarNode(m.senderName, m.senderPicture) : '') + '</div>';
+    }
+    html += '</div>';
+  });
+  el.innerHTML = html || '<div style="margin:auto;color:var(--text-faint);font-size:13px;">אין עדיין הודעות. שלחו את הראשונה!</div>';
+  el.scrollTop = el.scrollHeight;
+}
+
+const msgInput = document.getElementById('msgInput');
+const sendBtn = document.getElementById('sendBtn');
+msgInput.addEventListener('input', function(){
+  sendBtn.disabled = !msgInput.value.trim();
+  msgInput.style.height = 'auto';
+  msgInput.style.height = Math.min(msgInput.scrollHeight, 120) + 'px';
+});
+msgInput.addEventListener('keydown', function(e){
+  if(e.key === 'Enter' && !e.shiftKey){ e.preventDefault(); sendMessage(); }
+});
+sendBtn.addEventListener('click', sendMessage);
+
+function sendMessage(){
+  const text = msgInput.value.trim();
+  if(!text || !ACTIVE_SPACE) return;
+  msgInput.value = '';
+  msgInput.style.height='auto';
+  sendBtn.disabled = true;
+
+  const tempId = 'temp-'+Date.now();
+  const optimistic = { messageId:tempId, spaceId:ACTIVE_SPACE, senderEmail:ME.email, senderName:ME.name, senderPicture:ME.picture, text:text, timestamp:Date.now() };
+  MESSAGES.push(optimistic);
+  renderMessages();
+  const spaceAtSend = ACTIVE_SPACE;
+
+  callApi('sendMessage', [{ spaceId:ACTIVE_SPACE, senderEmail:ME.email, senderName:ME.name, senderPicture:ME.picture, text:text }]).then(function(saved){
+    const idx = MESSAGES.findIndex(function(m){ return m.messageId === tempId; });
+    if(idx !== -1) MESSAGES[idx] = saved;
+    if(ACTIVE_SPACE === spaceAtSend){
+      LAST_TS = Math.max(LAST_TS, saved.timestamp);
+      renderMessages();
+    }
+    refreshLists();
+  }).catch(function(err){
+    handleApiError(err);
+    const idx = MESSAGES.findIndex(function(m){ return m.messageId === tempId; });
+    if(idx !== -1) MESSAGES.splice(idx, 1);
+    renderMessages();
+  });
+}
+
+/* ===================== SEARCH (sidebar) ===================== */
+document.getElementById('searchInput').addEventListener('input', function(e){
+  const q = e.target.value.trim().toLowerCase();
+  document.querySelectorAll('.conv-item').forEach(function(node){
+    const name = node.querySelector('.conv-name').textContent.toLowerCase();
+    node.style.display = (!q || name.indexOf(q) !== -1) ? 'flex' : 'none';
+  });
+});
+
+/* ===================== NEW CONVERSATION MODAL ===================== */
+document.querySelectorAll('.new-btn').forEach(function(btn){
+  btn.addEventListener('click', function(){ openModal(btn.dataset.type); });
+});
+
+function openModal(type){
+  PENDING_TYPE = type;
+  SELECTED_MEMBERS = [];
+  document.getElementById('spaceNameInput').value = '';
+  document.getElementById('spaceDescInput').value = '';
+  document.getElementById('userSearchInput').value = '';
+  document.getElementById('userResults').style.display = 'none';
+  renderChips();
+
+  const isDm = type === 'dm';
+  document.getElementById('modalTitle').textContent = isDm ? 'צ׳אט אישי חדש' : (type === 'group' ? 'קבוצה חדשה' : 'מרחב חדש');
+  document.getElementById('nameField').style.display = isDm ? 'none' : 'block';
+  document.getElementById('descField').style.display = isDm ? 'none' : 'block';
+  document.getElementById('membersLabel').textContent = isDm ? 'חיפוש איש קשר' : 'הוספת חברים';
+  document.getElementById('createBtn').textContent = isDm ? 'פתיחת צ׳אט' : 'יצירה';
+  updateCreateBtn();
+  document.getElementById('modalOverlay').classList.add('open');
+}
+function closeModal(){ document.getElementById('modalOverlay').classList.remove('open'); }
+document.getElementById('modalClose').addEventListener('click', closeModal);
+document.getElementById('cancelBtn').addEventListener('click', closeModal);
+
+const userSearchInput = document.getElementById('userSearchInput');
+let searchDebounce;
+userSearchInput.addEventListener('input', function(){
+  clearTimeout(searchDebounce);
+  const q = userSearchInput.value.trim();
+  searchDebounce = setTimeout(function(){
+    callApi('searchUsers', [q, ME.email]).then(function(users){
+      const filtered = users.filter(function(u){ return !SELECTED_MEMBERS.find(function(m){return m.email===u.email;}); });
+      const el = document.getElementById('userResults');
+      if(filtered.length === 0){ el.style.display = 'none'; return; }
+      el.style.display = 'block';
+      el.innerHTML = filtered.map(function(u){
+        return '<div class="user-result" data-email="'+u.email+'" data-name="'+escapeHtml(u.name)+'" data-picture="'+escapeHtml(u.picture||'')+'">' +
+          '<div class="conv-avatar" style="background:'+colorFor(u.name)+'">'+avatarNode(u.name,u.picture)+'</div>' +
+          '<div><div class="nm">'+escapeHtml(u.name)+'</div><div class="em">'+escapeHtml(u.email)+'</div></div>' +
+        '</div>';
+      }).join('');
+      el.querySelectorAll('.user-result').forEach(function(node){
+        node.addEventListener('click', function(){
+          if(PENDING_TYPE === 'dm'){
+            SELECTED_MEMBERS = [{email:node.dataset.email, name:node.dataset.name, picture:node.dataset.picture}];
+          } else if(!SELECTED_MEMBERS.find(function(m){return m.email===node.dataset.email;})){
+            SELECTED_MEMBERS.push({email:node.dataset.email, name:node.dataset.name, picture:node.dataset.picture});
+          }
+          userSearchInput.value = '';
+          el.style.display = 'none';
+          renderChips();
+          updateCreateBtn();
+        });
+      });
+    }).catch(handleApiError);
+  }, 200);
+});
+
+function renderChips(){
+  const el = document.getElementById('selectedChips');
+  el.innerHTML = SELECTED_MEMBERS.map(function(m){
+    return '<span class="chip">'+escapeHtml(m.name)+
+      '<button data-email="'+m.email+'"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M18 6L6 18M6 6l12 12"/></svg></button></span>';
+  }).join('');
+  el.querySelectorAll('button').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      SELECTED_MEMBERS = SELECTED_MEMBERS.filter(function(m){ return m.email !== btn.dataset.email; });
+      renderChips();
+      updateCreateBtn();
+    });
+  });
+}
+
+function updateCreateBtn(){
+  const nameOk = PENDING_TYPE === 'dm' || document.getElementById('spaceNameInput').value.trim().length > 0;
+  document.getElementById('createBtn').disabled = SELECTED_MEMBERS.length === 0 || !nameOk;
+}
+document.getElementById('spaceNameInput').addEventListener('input', updateCreateBtn);
+
+document.getElementById('createBtn').addEventListener('click', function(){
+  const payload = {
+    type: PENDING_TYPE,
+    creatorEmail: ME.email,
+    memberEmails: SELECTED_MEMBERS.map(function(m){ return m.email; }),
+    name: PENDING_TYPE === 'dm' ? '' : document.getElementById('spaceNameInput').value.trim(),
+    description: PENDING_TYPE === 'dm' ? '' : document.getElementById('spaceDescInput').value.trim()
+  };
+  document.getElementById('createBtn').disabled = true;
+  callApi('createSpace', [payload]).then(function(space){
+    closeModal();
+    refreshListsThenOpen(space.spaceId);
+  }).catch(function(err){
+    handleApiError(err);
+    document.getElementById('createBtn').disabled = false;
+  });
+});
+
+function refreshListsThenOpen(spaceId){
+  callApi('getBootstrap', [ME.email]).then(function(list){
+    SPACES = list;
+    renderSidebar();
+    openSpace(spaceId);
+  }).catch(handleApiError);
+}
+</script>
+</body>
+</html>
