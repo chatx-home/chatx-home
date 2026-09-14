@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="he" dir="rtl">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -9,432 +9,306 @@
   <script src="https://accounts.google.com/gsi/client" async defer></script>
   <style>
     :root{
-      --bg:#ffffff;
-      --panel:#F7F8FA;
-      --border:#E4E7EC;
-      --text:#1F2430;
-      --text-dim:#6B7280;
-      --text-faint:#98A1AF;
-      --hover:#EFF2F6;
-      --dm:#1A73E8;
-      --dm-bg:#EAF2FE;
-      --group:#DB6E12;
-      --group-bg:#FBEEE0;
-      --space:#7C3AED;
-      --space-bg:#F1EBFC;
-      --danger:#D93025;
-      --star:#F0A000;
-      --radius:14px;
-      --shadow:0 10px 30px rgba(20,25,40,.14);
-      --shadow-sm:0 2px 10px rgba(20,25,40,.14);
-      --gchip:#F1F3F4;
-      --gicon:#5F6368;
-      --bubble-own:#DDE9FE;
-      --bubble-other:#F0EEEA;
-      --bubble-text:#1F2430;
+      --bg:#ffffff; --panel:#F8FAFD; --border:#DDE3EA; --border-soft:#E9EDF2;
+      --text:#1F2430; --text-dim:#5F6B7A; --text-faint:#98A1AF;
+      --hover:#EDF1F7; --active:#DDE8FA;
+      --dm:#0B57D0; --dm-bg:#D3E3FD; --dm-soft:#E8F0FE;
+      --group:#DB6E12; --group-bg:#FBEEE0; --space:#7C3AED; --space-bg:#F1EBFC;
+      --danger:#D93025; --ok:#1E8E3E;
+      --radius:14px; --shadow:0 8px 28px rgba(20,25,40,.14); --shadow-sm:0 2px 10px rgba(20,25,40,.10);
+      --gchip:#F1F3F4; --gicon:#5F6368;
+      --bubble-own:#D3E3FD; --bubble-other:#F0F1F3; --bubble-text:#1F2430;
     }
     *{box-sizing:border-box;}
     html,body{height:100%;}
-    body{
-      margin:0;
-      font-family:'Rubik',Arial,sans-serif;
-      color:var(--text);
-      background:var(--bg);
-      direction:rtl;
-      overflow:hidden;
-    }
+    body{margin:0;font-family:'Rubik',Arial,sans-serif;color:var(--text);background:var(--bg);direction:rtl;overflow:hidden;}
     button{font-family:inherit;}
     input,textarea{font-family:inherit;}
-    button:focus-visible,input:focus-visible,textarea:focus-visible,[tabindex]:focus-visible{
-      outline:2px solid var(--dm); outline-offset:2px;
-    }
     ::-webkit-scrollbar{width:8px;height:8px;}
     ::-webkit-scrollbar-thumb{background:#D6DAE2;border-radius:8px;}
     ::-webkit-scrollbar-thumb:hover{background:#C1C7D1;}
+    @keyframes popIn{from{opacity:0;transform:translateY(6px) scale(.98);}to{opacity:1;transform:none;}}
+    @keyframes fadeUp{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:none;}}
+    @keyframes flashBg{0%{background:var(--dm-bg);}100%{background:transparent;}}
+    @keyframes pulse{0%,100%{opacity:1;}50%{opacity:.35;}}
+    @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important;}}
 
-    /* ---------- Login screen ---------- */
-    #loginScreen{
-      position:fixed; inset:0; display:flex; align-items:center; justify-content:center;
-      background:linear-gradient(160deg,#F4F7FD 0%,#EFEFFC 55%,#FBF3EE 100%);
-      z-index:100;
-    }
-    .login-card{
-      background:#fff; border-radius:24px; box-shadow:var(--shadow);
-      padding:48px 44px; width:360px; text-align:center;
-    }
-    .login-mark{
-      width:56px;height:56px;border-radius:16px;margin:0 auto 20px;
-      background:linear-gradient(135deg,var(--dm),var(--space));
-      display:flex;align-items:center;justify-content:center;
-    }
-    .login-mark svg{width:28px;height:28px;}
-    .login-card h1{font-size:22px;font-weight:700;margin:0 0 6px;}
-    .login-card p{color:var(--text-dim);font-size:14px;margin:0 0 28px;line-height:1.6;}
+    /* ---------- Login ---------- */
+    #loginScreen{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;z-index:100;
+      background:linear-gradient(160deg,#EAF1FD 0%,#EFEFFC 50%,#FDF3EC 100%);overflow:hidden;}
+    #loginScreen::before,#loginScreen::after{content:'';position:absolute;border-radius:50%;filter:blur(60px);opacity:.55;}
+    #loginScreen::before{width:420px;height:420px;background:#D3E3FD;top:-120px;left:-100px;}
+    #loginScreen::after{width:380px;height:380px;background:#FBDCE0;bottom:-140px;right:-80px;}
+    .login-card{background:#fff;border-radius:28px;box-shadow:var(--shadow);padding:46px 42px;width:380px;text-align:center;position:relative;animation:fadeUp .5s ease both;}
+    .login-mark{width:60px;height:60px;border-radius:18px;margin:0 auto 20px;background:linear-gradient(135deg,var(--dm),var(--space));display:flex;align-items:center;justify-content:center;box-shadow:var(--shadow-sm);}
+    .login-mark svg{width:30px;height:30px;}
+    .login-card h1{font-size:23px;font-weight:700;margin:0 0 8px;}
+    .login-card p{color:var(--text-dim);font-size:14px;margin:0 0 26px;line-height:1.7;}
     #gsiButtonHolder{display:flex;justify-content:center;}
+    .login-feats{display:flex;justify-content:center;gap:16px;margin-top:26px;padding-top:20px;border-top:1px solid var(--border-soft);}
+    .login-feats span{font-size:12px;color:var(--text-dim);display:flex;align-items:center;gap:5px;}
+    .login-feats i{width:7px;height:7px;border-radius:50%;background:var(--dm);display:inline-block;}
 
     /* ---------- App shell ---------- */
-    #app{display:none; height:100%; flex-direction:column;}
+    #app{display:none;height:100%;flex-direction:column;}
     #app.ready{display:flex;}
-
-    header.topbar{
-      height:60px; flex:none; display:flex; align-items:center; gap:16px;
-      padding:0 20px; border-bottom:1px solid var(--border); background:#fff;
-    }
+    header.topbar{height:60px;flex:none;display:flex;align-items:center;gap:16px;padding:0 20px;border-bottom:1px solid var(--border);background:#fff;z-index:20;}
     .brand{display:flex;align-items:center;gap:10px;font-weight:700;font-size:17px;white-space:nowrap;}
-    .brand-mark{
-      width:32px;height:32px;border-radius:9px;flex:none;
-      background:linear-gradient(135deg,var(--dm),var(--space));
-      display:flex;align-items:center;justify-content:center;
-    }
+    .brand-mark{width:32px;height:32px;border-radius:9px;flex:none;background:linear-gradient(135deg,var(--dm),var(--space));display:flex;align-items:center;justify-content:center;}
     .brand-mark svg{width:18px;height:18px;}
     .search-wrap{flex:1;max-width:520px;position:relative;}
     .search-wrap svg{position:absolute;top:50%;right:14px;transform:translateY(-50%);color:var(--text-faint);pointer-events:none;}
-    .search-wrap input{
-      width:100%; height:40px; border-radius:20px; border:1px solid var(--border);
-      background:var(--panel); padding:0 42px 0 16px; font-size:14px; color:var(--text); outline:none;
-      transition:border-color .15s, background .15s;
-    }
-    .search-wrap input:focus{background:#fff;border-color:var(--dm);}
-    .topbar-actions{display:flex;align-items:center;gap:4px;}
-    .me-avatar{
-      width:36px;height:36px;border-radius:50%;flex:none;cursor:pointer;object-fit:cover;
-      border:2px solid transparent;
-    }
-    .me-avatar:hover{border-color:var(--border);}
+    .search-wrap input{width:100%;height:40px;border-radius:20px;border:1px solid var(--border);background:var(--panel);padding:0 42px 0 16px;font-size:14px;color:var(--text);outline:none;transition:border-color .15s,background .15s,box-shadow .15s;}
+    .search-wrap input:focus{background:#fff;border-color:var(--dm);box-shadow:0 0 0 3px var(--dm-soft);}
+    .me-avatar{width:36px;height:36px;border-radius:50%;flex:none;cursor:pointer;object-fit:cover;border:2px solid transparent;transition:box-shadow .15s;}
+    .me-avatar:hover{box-shadow:0 0 0 3px var(--dm-soft);}
     .me-menu-wrap{position:relative;}
-    .me-menu{
-      position:absolute; left:0; top:46px; background:#fff; border:1px solid var(--border);
-      border-radius:12px; box-shadow:var(--shadow); width:240px; display:none; overflow:hidden; z-index:150;
-    }
+    .me-menu{position:absolute;left:0;top:46px;background:#fff;border:1px solid var(--border);border-radius:14px;box-shadow:var(--shadow);width:250px;display:none;overflow:hidden;z-index:200;animation:popIn .14s ease both;}
     .me-menu.open{display:block;}
-    .me-menu .who{padding:14px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;}
-    .me-menu .who img{width:36px;height:36px;border-radius:50%;flex:none;object-fit:cover;}
-    .me-menu .who div{min-width:0;}
-    .me-menu .who b{display:block;font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-    .me-menu .who span{font-size:12px;color:var(--text-dim);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;display:block;}
-    .me-menu button{
-      width:100%; text-align:right; background:none; border:none; padding:11px 16px;
-      font-size:13.5px; cursor:pointer; color:var(--text); display:flex; align-items:center; gap:10px;
-    }
-    .me-menu button svg{flex:none;color:var(--text-dim);}
-    .me-menu button.danger{color:var(--danger);}
-    .me-menu button.danger svg{color:var(--danger);}
-    .me-menu button:hover{background:var(--hover);}
-    .me-menu .sep{height:1px;background:var(--border);margin:4px 0;}
+    .me-menu .who{padding:14px 16px;border-bottom:1px solid var(--border-soft);}
+    .me-menu .who b{display:block;font-size:14px;}
+    .me-menu .who span{font-size:12px;color:var(--text-dim);}
+    .me-menu .mi{display:flex;width:100%;align-items:center;gap:10px;background:none;border:none;padding:11px 16px;font-size:13.5px;cursor:pointer;color:var(--text);text-align:right;}
+    .me-menu .mi svg{color:var(--gicon);flex:none;}
+    .me-menu .mi:hover{background:var(--hover);}
+    .me-menu .mi .sw{margin-inline-start:auto;}
+    .me-menu .mi.danger{color:var(--danger);}
+    .me-menu .mi.danger svg{color:var(--danger);}
+    .switch{position:relative;width:34px;height:20px;border-radius:10px;background:#CBD2DA;transition:background .15s;flex:none;}
+    .switch::after{content:'';position:absolute;top:2px;right:2px;width:16px;height:16px;border-radius:50%;background:#fff;transition:transform .15s;box-shadow:0 1px 3px rgba(0,0,0,.25);}
+    .switch.on{background:var(--dm);}
+    .switch.on::after{transform:translateX(-14px);}
+    .status-dot{width:9px;height:9px;border-radius:50%;background:var(--ok);flex:none;}
+    .status-dot.away{background:#F9AB00;}
 
-    .body-row{flex:1; display:flex; min-height:0; position:relative;}
+    .body-row{flex:1;display:flex;min-height:0;}
 
     /* ---------- Sidebar ---------- */
-    aside.sidebar{
-      width:300px; flex:none; background:var(--panel); border-left:1px solid var(--border);
-      display:flex; flex-direction:column; overflow-y:auto; padding:12px 10px 20px;
-    }
-    .new-chat-wrap{position:relative;margin-bottom:14px;}
-    .new-chat-btn{
-      width:100%; display:flex; align-items:center; gap:10px; padding:11px 16px; border:none;
-      border-radius:24px; background:var(--dm); color:#fff; font-size:14px; font-weight:600;
-      cursor:pointer; box-shadow:0 1px 3px rgba(26,115,232,.35); transition:background .12s, box-shadow .12s;
-    }
-    .new-chat-btn:hover{background:#1662C4; box-shadow:0 2px 8px rgba(26,115,232,.4);}
-    .new-chat-btn svg{flex:none;}
-    .new-chat-btn .lbl{flex:1;text-align:right;}
-    .new-chat-btn .chev{transition:transform .15s;}
-    .new-chat-btn.open .chev{transform:rotate(180deg);}
-
-    .nav-home,.nav-item{
-      display:flex; align-items:center; gap:10px; padding:10px 12px; border-radius:10px;
-      font-weight:600; font-size:14px; cursor:pointer; color:var(--text); margin-bottom:2px;
-    }
-    .nav-home svg,.nav-item svg{color:var(--text-dim);flex:none;}
-    .nav-home:hover,.nav-item:hover{background:var(--hover);}
-    .nav-home.active,.nav-item.active{background:var(--dm-bg); color:var(--dm);}
-    .nav-home.active svg,.nav-item.active svg{color:var(--dm);}
-    .nav-item .hint{margin-right:auto;font-size:9.5px;font-weight:600;color:var(--text-faint);background:var(--gchip);padding:2px 6px;border-radius:6px;}
-
+    aside.sidebar{width:320px;flex:none;background:#FBFCFE;border-left:1px solid var(--border);display:flex;flex-direction:column;overflow-y:auto;padding:10px 10px 24px;}
+    .new-chat-btn{display:flex;align-items:center;gap:10px;background:#fff;border:1px solid var(--border);border-radius:24px;padding:10px 18px;font-size:14px;font-weight:600;cursor:pointer;margin:2px 2px 12px;box-shadow:var(--shadow-sm);transition:box-shadow .15s,background .15s;width:fit-content;}
+    .new-chat-btn:hover{background:var(--hover);box-shadow:var(--shadow);}
+    .new-chat-btn svg{color:var(--dm);}
+    .chips-row{display:flex;gap:6px;padding:0 2px 10px;flex-wrap:wrap;}
+    .chip-btn{border:1px solid var(--border);background:#fff;border-radius:16px;padding:5px 12px;font-size:12.5px;color:var(--text-dim);cursor:pointer;transition:all .13s;}
+    .chip-btn:hover{background:var(--hover);}
+    .chip-btn.active{background:var(--dm-bg);border-color:var(--dm-bg);color:var(--dm);font-weight:600;}
+    .nav-home{display:flex;align-items:center;gap:10px;padding:11px 12px;border-radius:12px;font-weight:600;font-size:14px;cursor:pointer;color:var(--text);margin-bottom:6px;}
+    .nav-home svg{color:var(--text-dim);flex:none;}
+    .nav-home:hover{background:var(--hover);}
+    .nav-home.active{background:var(--dm-bg);color:var(--dm);}
+    .nav-home.active svg{color:var(--dm);}
     .section{margin-top:6px;}
-    .section-head{
-      display:flex; align-items:center; gap:4px; padding:8px 6px 6px 10px;
-      color:var(--text-dim); font-size:12px; font-weight:700; letter-spacing:.2px;
-    }
-    .section-head .head-title{flex:1;}
-    .section-head button{
-      width:24px;height:24px;border-radius:50%;border:none;background:transparent;color:var(--text-dim);
-      cursor:pointer; display:flex; align-items:center; justify-content:center; flex:none;
-    }
-    .section-head button:hover{background:#E2E6EC;color:var(--text);}
-    .section-head .collapse-btn svg{transition:transform .15s;}
-    .section.collapsed .collapse-btn svg{transform:rotate(-90deg);}
+    .section-head{display:flex;align-items:center;justify-content:space-between;padding:7px 10px 5px;color:var(--text-dim);font-size:12px;font-weight:600;letter-spacing:.2px;border-radius:8px;cursor:pointer;user-select:none;}
+    .section-head:hover{background:var(--hover);}
+    .section-head .sh-right{display:flex;align-items:center;gap:4px;}
+    .section-head .sec-arrow{transition:transform .15s;display:flex;}
+    .section.collapsed .sec-arrow{transform:rotate(90deg);}
     .section.collapsed .section-list{display:none;}
-
-    .conv-item{
-      display:flex; align-items:center; gap:9px; padding:8px 8px 8px 10px; border-radius:10px;
-      cursor:pointer; position:relative;
-    }
+    .section-head button{width:22px;height:22px;border-radius:50%;border:none;background:transparent;color:var(--text-dim);cursor:pointer;display:flex;align-items:center;justify-content:center;}
+    .section-head button:hover{background:#E2E6EC;color:var(--text);}
+    .conv-item{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:12px;cursor:pointer;position:relative;transition:background .12s;animation:fadeUp .18s ease both;}
     .conv-item:hover{background:var(--hover);}
-    .conv-item:hover .conv-kebab{opacity:1;}
-    .conv-item.active{background:#fff; box-shadow:0 0 0 1px var(--border) inset;}
-    .conv-avatar{
-      width:38px;height:38px;border-radius:50%;flex:none;display:flex;align-items:center;justify-content:center;
-      font-size:14px;font-weight:600;color:#fff;object-fit:cover;position:relative;
-    }
+    .conv-item.active{background:var(--dm-bg);}
+    .conv-item.active .conv-name{color:var(--dm);}
+    .conv-avatar{width:40px;height:40px;border-radius:50%;flex:none;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:600;color:#fff;object-fit:cover;}
     .conv-avatar img{width:100%;height:100%;border-radius:50%;object-fit:cover;}
     .conv-meta{flex:1;min-width:0;}
     .conv-top-row{display:flex;justify-content:space-between;align-items:baseline;gap:6px;}
-    .conv-name-row{display:flex;align-items:center;gap:4px;min-width:0;}
-    .conv-flag{flex:none;display:flex;color:var(--text-faint);}
-    .conv-flag.star{color:var(--star);}
-    .conv-name{font-size:13.5px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+    .conv-name{font-size:13.5px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
     .conv-time{font-size:11px;color:var(--text-faint);flex:none;}
     .conv-preview{font-size:12.5px;color:var(--text-dim);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-    .conv-item.unread .conv-name{color:var(--text);}
+    .conv-item.unread .conv-name{font-weight:700;}
     .conv-item.unread .conv-preview{color:var(--text);font-weight:500;}
-    .unread-dot{
-      min-width:18px;height:18px;padding:0 5px;border-radius:9px;background:var(--dm);color:#fff;
-      font-size:10.5px;font-weight:700;display:flex;align-items:center;justify-content:center;flex:none;
-    }
-    .conv-kebab{
-      opacity:0;width:26px;height:26px;border:none;background:transparent;border-radius:50%;color:var(--text-dim);
-      display:flex;align-items:center;justify-content:center;cursor:pointer;flex:none;transition:opacity .1s,background .1s;
-    }
+    .unread-dot{min-width:18px;height:18px;padding:0 5px;border-radius:9px;background:var(--dm);color:#fff;font-size:10.5px;font-weight:700;display:flex;align-items:center;justify-content:center;flex:none;}
+    .conv-kebab{width:26px;height:26px;border:none;border-radius:50%;background:transparent;color:var(--text-faint);cursor:pointer;display:none;align-items:center;justify-content:center;flex:none;}
+    .conv-item:hover .conv-kebab{display:flex;}
     .conv-kebab:hover{background:#E2E6EC;color:var(--text);}
+    .pin-flag{position:absolute;top:8px;inset-inline-end:8px;font-size:10px;}
     .empty-hint{padding:10px 12px;font-size:12.5px;color:var(--text-faint);line-height:1.6;}
+    .skeleton{height:52px;border-radius:12px;margin:4px 2px;background:linear-gradient(90deg,#EEF1F5 25%,#F7F9FB 50%,#EEF1F5 75%);background-size:200% 100%;animation:sh 1.2s infinite;}
+    @keyframes sh{from{background-position:200% 0;}to{background-position:-200% 0;}}
 
-    /* ---------- Main area ---------- */
-    main.main{flex:1; display:flex; flex-direction:column; min-width:0; background:#fff; position:relative;}
-
+    /* ---------- Main ---------- */
+    main.main{flex:1;display:flex;flex-direction:column;min-width:0;background:#fff;position:relative;}
     .home-view{flex:1;overflow-y:auto;padding:28px 34px;}
-    .home-greet{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:26px;}
     .home-greet h2{font-size:22px;margin:0 0 2px;}
-    .home-greet p{color:var(--text-dim);font-size:14px;margin:0;}
-    .home-list .conv-item{padding:11px 10px 11px 12px;}
+    .home-greet p{color:var(--text-dim);font-size:14px;margin:0 0 16px;}
+    .home-chips{display:flex;gap:8px;margin-bottom:18px;}
+    .home-list .conv-item{padding:12px;}
     .home-list .conv-avatar{width:46px;height:46px;font-size:16px;}
     .home-list .conv-name{font-size:14.5px;}
     .home-list .conv-preview{font-size:13px;}
-
-    .empty-state{
-      flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center;
-      color:var(--text-dim); gap:14px; padding:20px; text-align:center;
-    }
+    .empty-state{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;color:var(--text-dim);gap:14px;padding:20px;text-align:center;}
     .empty-state svg{color:#D6DAE2;}
     .empty-state h3{margin:0;color:var(--text);font-size:16px;}
-    .empty-state p{margin:0;font-size:13.5px;max-width:280px;line-height:1.6;}
+    .empty-state p{margin:0;font-size:13.5px;max-width:300px;line-height:1.6;}
 
-    /* ---------- Notification banner ---------- */
-    .notif-banner{display:none;align-items:center;justify-content:space-between;gap:12px;background:var(--dm-bg);color:#0B4EA2;padding:10px 20px;font-size:13px;border-bottom:1px solid var(--border);flex:none;}
-    .notif-banner.open{display:flex;}
-    .notif-banner .nb-txt{display:flex;align-items:center;gap:8px;}
-    .notif-banner button{border:none;cursor:pointer;font-weight:600;border-radius:8px;padding:6px 14px;font-size:12.5px;}
-    .notif-banner .nb-yes{background:var(--dm);color:#fff;}
-    .notif-banner .nb-yes:hover{background:#1662C4;}
-    .notif-banner .nb-no{background:transparent;color:var(--dm);text-decoration:underline;padding:6px 4px;}
-
-    .chat-header{
-      height:64px; flex:none; display:flex; align-items:center; gap:8px; padding:0 16px;
-      border-bottom:1px solid var(--border); background:#fff;
-    }
+    /* ---------- Chat header ---------- */
+    .chat-header{height:64px;flex:none;display:flex;align-items:center;gap:8px;padding:0 16px;border-bottom:1px solid var(--border);background:#fff;}
     #backBtn{display:none;background:none;border:none;cursor:pointer;color:var(--text-dim);}
-    .chat-header .header-tools{display:flex;align-items:center;gap:6px;}
-    .icon-pill-group{display:flex;align-items:center;gap:6px;background:var(--gchip);border-radius:20px;padding:4px;}
-    .icon-btn{
-      width:34px;height:34px;border:none;background:transparent;border-radius:50%;color:var(--gicon);
-      display:flex;align-items:center;justify-content:center;cursor:pointer;flex:none;transition:background .12s,color .12s;position:relative;
-    }
-    .icon-btn:hover{background:rgba(0,0,0,.06);}
-    .icon-pill-group .icon-btn:hover{background:rgba(0,0,0,.08);}
-    .icon-btn.is-active{background:var(--dm-bg);color:var(--dm);}
-    .icon-btn.recording{color:#fff;background:var(--danger);animation:recPulse 1.1s infinite;}
-    @keyframes recPulse{0%{box-shadow:0 0 0 0 rgba(217,48,37,.45);}70%{box-shadow:0 0 0 9px rgba(217,48,37,0);}100%{box-shadow:0 0 0 0 rgba(217,48,37,0);}}
+    .icon-pill-group{display:flex;align-items:center;gap:4px;background:var(--gchip);border-radius:22px;padding:4px;}
+    .icon-btn{width:34px;height:34px;border:none;background:transparent;border-radius:50%;color:var(--gicon);display:flex;align-items:center;justify-content:center;cursor:pointer;flex:none;transition:background .12s,transform .08s;}
+    .icon-btn:hover{background:rgba(0,0,0,.07);}
+    .icon-btn:active{transform:scale(.92);}
+    .icon-btn.on{background:var(--dm-bg);color:var(--dm);}
     .chat-header .header-spacer{flex:1;}
-    .chat-header .who{display:flex;align-items:center;gap:10px;min-width:0;cursor:pointer;padding:4px 6px;border-radius:8px;}
-    .chat-header .who:hover{background:var(--hover);}
-    .chat-header .conv-avatar{width:32px;height:32px;font-size:13px;}
-    .chat-header .titles{min-width:0;}
+    .chat-header .who{display:flex;align-items:center;gap:10px;min-width:0;}
+    .chat-header .conv-avatar{width:34px;height:34px;font-size:13px;}
+    .chat-header .titles{min-width:0;cursor:pointer;}
     .chat-header .titles b{display:block;font-size:15px;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
     .chat-header .titles span{font-size:11.5px;color:var(--text-dim);}
-    .chat-header .chevron{color:var(--gicon);display:flex;cursor:pointer;padding:4px;border-radius:50%;}
-    .chat-header .chevron:hover{background:var(--hover);}
+    .chat-header .chevron{color:var(--gicon);display:flex;}
 
-    /* ---------- Search bar / pinned panel ---------- */
-    .search-bar{display:none;align-items:center;gap:8px;padding:9px 16px;border-bottom:1px solid var(--border);background:#fff;flex:none;}
-    .search-bar.open{display:flex;}
-    .search-bar svg{color:var(--text-faint);flex:none;}
-    .search-bar input{flex:1;border:1px solid var(--border);border-radius:20px;padding:8px 14px;font-size:13.5px;outline:none;background:var(--panel);}
-    .search-bar input:focus{border-color:var(--dm);background:#fff;}
-    .search-bar .s-count{font-size:12px;color:var(--text-dim);white-space:nowrap;min-width:36px;text-align:center;}
-    .search-bar button.nav{background:var(--gchip);border:none;color:var(--gicon);width:30px;height:30px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;flex:none;}
-    .search-bar button.nav:hover{background:var(--hover);}
-    .search-bar button.close-x{background:none;border:none;color:var(--text-dim);cursor:pointer;flex:none;}
-
-    .pinned-panel{display:none;flex-direction:column;gap:6px;border-bottom:1px solid var(--border);background:#FFFBEA;padding:10px 16px;max-height:150px;overflow-y:auto;flex:none;}
-    .pinned-panel.open{display:flex;}
-    .pinned-panel .pp-head{font-size:11.5px;font-weight:700;color:#8A6D00;display:flex;align-items:center;gap:6px;}
-    .pinned-item{display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:12.5px;background:#fff;border:1px solid var(--border);border-radius:10px;padding:7px 10px;cursor:pointer;}
-    .pinned-item:hover{border-color:var(--star);}
-    .pinned-item .pi-main{min-width:0;display:flex;flex-direction:column;gap:1px;}
-    .pinned-item b{font-weight:600;font-size:11.5px;color:var(--text-dim);}
-    .pinned-item .pi-txt{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-    .pinned-item button{background:none;border:none;color:var(--text-faint);cursor:pointer;flex:none;}
-    .pinned-item button:hover{color:var(--danger);}
-    .pinned-empty{font-size:12px;color:var(--text-dim);}
-
-    .messages{flex:1; overflow-y:auto; padding:16px 24px; display:flex; flex-direction:column; background:#fff;}
-    #messagesEl.compact .msg-bubble{padding:6px 12px;font-size:13.5px;}
-    #messagesEl.compact .msg-row-wrap{margin:0;}
-    #messagesEl.compact .msg-group-head{margin:8px 2px 2px;}
+    /* ---------- Messages ---------- */
+    .messages{flex:1;overflow-y:auto;padding:16px 24px;display:flex;flex-direction:column;background:#fff;}
+    #app[data-density="compact"] .messages{padding:10px 20px;}
     .empty-msgs{margin:auto;color:var(--text-faint);font-size:13px;}
-    .day-sep{align-self:center;font-size:11.5px;color:var(--text-faint);background:var(--panel);padding:4px 12px;border-radius:12px;margin:16px 0 10px;}
-    .msg-group-head{
-      display:flex; align-items:baseline; gap:6px; margin:14px 2px 4px;
-      font-size:11.5px; color:var(--text-faint);
-    }
+    .day-sep{align-self:center;font-size:11.5px;color:var(--text-dim);background:var(--panel);border:1px solid var(--border-soft);padding:4px 14px;border-radius:14px;margin:16px 0 10px;}
+    .msg-group-head{display:flex;align-items:baseline;gap:6px;margin:14px 2px 4px;font-size:11.5px;color:var(--text-faint);}
     .msg-group-head.own{align-self:flex-end;}
     .msg-group-head.other{align-self:flex-start;}
     .msg-group-head .g-name{font-weight:600;color:var(--text-dim);}
-
-    .msg-row-wrap{display:flex;flex-direction:column;gap:2px;max-width:66%;margin:1px 0;position:relative;}
-    .msg-row-wrap.own{align-self:flex-end;align-items:flex-end;}
-    .msg-row-wrap.other{align-self:flex-start;align-items:flex-start;}
-    .msg-row-wrap.flash .msg-bubble{animation:flashHi 1.6s ease;}
-    @keyframes flashHi{0%{box-shadow:0 0 0 3px var(--star);}100%{box-shadow:0 0 0 0 rgba(240,160,0,0);}}
-
-    .msg-row{display:flex; align-items:flex-end; gap:8px; width:100%;}
-    .msg-row.own{justify-content:flex-end;}
-    .msg-row.other{justify-content:flex-start;}
-    .msg-avatar{width:26px;height:26px;border-radius:50%;flex:none;font-size:11px;font-weight:600;color:#fff;display:flex;align-items:center;justify-content:center;}
+    .msg-row{display:flex;align-items:flex-end;gap:8px;max-width:66%;margin:1.5px 0;position:relative;animation:popIn .16s ease both;}
+    .msg-row.own{align-self:flex-end;}
+    .msg-row.other{align-self:flex-start;}
+    .msg-avatar{width:28px;height:28px;border-radius:50%;flex:none;font-size:11px;font-weight:600;color:#fff;display:flex;align-items:center;justify-content:center;}
     .msg-avatar img{width:100%;height:100%;border-radius:50%;object-fit:cover;}
     .msg-avatar.spacer{visibility:hidden;}
-    .msg-bubble{padding:9px 14px;border-radius:18px;font-size:14px;line-height:1.5;position:relative;word-break:break-word;white-space:pre-wrap;color:var(--bubble-text);}
-    .msg-bubble code{background:rgba(0,0,0,.08);padding:1px 5px;border-radius:5px;font-family:monospace;font-size:.92em;}
-    .msg-bubble a{color:var(--dm);}
-    .msg-row.own .msg-bubble{background:var(--bubble-own);}
-    .msg-row.other .msg-bubble{background:var(--bubble-other);}
+    .msg-bubble{padding:9px 14px;border-radius:18px;font-size:14px;line-height:1.55;position:relative;word-break:break-word;white-space:pre-wrap;color:var(--bubble-text);}
+    #app[data-density="compact"] .msg-bubble{padding:6px 12px;font-size:13.5px;}
+    .msg-row.own .msg-bubble{background:var(--bubble-own);border-bottom-right-radius:5px;}
+    .msg-row.other .msg-bubble{background:var(--bubble-other);border-bottom-left-radius:5px;}
     .msg-row.pending .msg-bubble{opacity:.55;}
-    .msg-row.own .msg-bubble{border-bottom-left-radius:4px;}
-    .msg-row.other .msg-bubble{border-bottom-right-radius:4px;}
-    .msg-img{max-width:230px;max-height:230px;border-radius:10px;display:block;cursor:zoom-in;}
+    .msg-row.flash{animation:flashBg 1.2s ease both;border-radius:12px;}
+    .msg-bubble a{color:var(--dm);text-decoration:underline;}
+    .msg-bubble code{background:rgba(0,0,0,.07);border-radius:5px;padding:1px 5px;font-size:12.5px;direction:ltr;unicode-bidi:embed;}
+    .msg-img{max-width:260px;max-height:220px;border-radius:12px;display:block;cursor:zoom-in;margin:2px 0;}
+    .file-chip{display:inline-flex;align-items:center;gap:6px;background:#fff;border:1px solid var(--border);border-radius:10px;padding:5px 10px;font-size:13px;direction:rtl;}
+    .msg-actions{position:absolute;top:-16px;inset-inline-start:6px;display:none;gap:2px;background:#fff;border:1px solid var(--border);border-radius:16px;padding:2px;box-shadow:var(--shadow-sm);z-index:5;}
+    .msg-row:hover .msg-actions{display:flex;}
+    .msg-actions button{width:26px;height:26px;border:none;background:none;border-radius:50%;cursor:pointer;font-size:13px;display:flex;align-items:center;justify-content:center;color:var(--gicon);}
+    .msg-actions button:hover{background:var(--hover);}
+    .react-row{display:flex;gap:4px;margin:3px 34px 2px;flex-wrap:wrap;}
+    .react-row.own{margin-inline-start:0;margin-inline-end:8px;}
+    .react-chip{border:1px solid var(--border);background:#fff;border-radius:12px;padding:2px 8px;font-size:12px;cursor:pointer;}
+    .react-chip.mine{background:var(--dm-bg);border-color:var(--dm-bg);}
 
-    .msg-toolbar{
-      position:absolute; top:-20px; display:none; align-items:center; gap:1px; background:#fff;
-      border:1px solid var(--border); border-radius:22px; box-shadow:var(--shadow-sm); padding:3px; z-index:6;
-    }
-    .msg-row-wrap:hover .msg-toolbar{display:flex;}
-    .msg-row-wrap.own .msg-toolbar{left:34px;}
-    .msg-row-wrap.other .msg-toolbar{right:34px;}
-    .msg-toolbar button{width:27px;height:27px;border:none;background:transparent;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:14px;color:var(--gicon);}
-    .msg-toolbar button:hover{background:var(--hover);}
+    /* ---------- Slide-over panel ---------- */
+    .side-panel{position:absolute;top:0;bottom:0;left:0;width:330px;max-width:88%;background:#fff;border-right:1px solid var(--border);box-shadow:var(--shadow);z-index:60;display:none;flex-direction:column;animation:panelIn .18s ease both;}
+    @keyframes panelIn{from{transform:translateX(-24px);opacity:0;}to{transform:none;opacity:1;}}
+    .side-panel.open{display:flex;}
+    .panel-head{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1px solid var(--border-soft);}
+    .panel-head b{font-size:14.5px;}
+    .panel-body{flex:1;overflow-y:auto;padding:12px;}
+    .panel-item{display:flex;gap:10px;padding:10px;border-radius:12px;cursor:pointer;align-items:flex-start;}
+    .panel-item:hover{background:var(--hover);}
+    .panel-item .pi-txt{flex:1;min-width:0;font-size:13px;line-height:1.5;}
+    .panel-item .pi-txt small{display:block;color:var(--text-faint);font-size:11px;margin-top:2px;}
+    .panel-item .pi-txt b{font-size:12.5px;}
+    .panel-item img.pi-thumb{width:44px;height:44px;border-radius:8px;object-fit:cover;flex:none;}
+    .panel-item .pi-unpin{border:none;background:none;color:var(--text-faint);cursor:pointer;border-radius:8px;width:26px;height:26px;flex:none;}
+    .panel-item .pi-unpin:hover{background:#FCE8E6;color:var(--danger);}
+    .panel-search{width:100%;border:1px solid var(--border);border-radius:12px;padding:10px 12px;font-size:13.5px;outline:none;margin-bottom:8px;}
+    .panel-search:focus{border-color:var(--dm);}
+    .day-chip{display:block;width:100%;text-align:right;border:1px solid var(--border);background:#fff;border-radius:12px;padding:11px 14px;margin-bottom:8px;font-size:13.5px;cursor:pointer;}
+    .day-chip:hover{background:var(--hover);}
+    .info-rows{display:flex;flex-direction:column;gap:2px;}
+    .info-row{display:flex;justify-content:space-between;padding:11px 6px;border-bottom:1px solid var(--border-soft);font-size:13.5px;}
+    .info-row span{color:var(--text-dim);}
+    .big-img{max-width:100%;border-radius:12px;}
 
-    .msg-reactions{display:flex;gap:4px;flex-wrap:wrap;margin-top:1px;}
-    .reaction-pill{display:flex;align-items:center;gap:3px;background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:2px 8px;font-size:12px;cursor:pointer;line-height:1.5;}
-    .reaction-pill:hover{border-color:var(--dm);}
-    .reaction-pill.mine{background:var(--dm-bg);border-color:var(--dm);color:var(--dm);}
-
-    .reply-preview{display:none;align-items:center;justify-content:space-between;gap:10px;background:var(--panel);border-top:1px solid var(--border);padding:9px 16px;font-size:12.5px;flex:none;}
-    .reply-preview.open{display:flex;}
-    .reply-preview .rp-main{display:flex;flex-direction:column;gap:1px;border-right:3px solid var(--dm);padding-right:8px;overflow:hidden;min-width:0;}
-    .reply-preview b{font-size:12px;color:var(--dm);}
-    .reply-preview span{color:var(--text-dim);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-    .reply-preview button{background:none;border:none;color:var(--text-dim);cursor:pointer;flex:none;}
-
-    .composer{flex:none; border-top:1px solid var(--border); padding:12px 16px; display:flex; align-items:center; gap:8px; background:#fff;}
-    .composer-bar{
-      flex:1; display:flex; align-items:center; gap:2px; background:var(--panel); border:1px solid var(--border);
-      border-radius:26px; padding:5px 8px; min-height:44px;
-    }
+    /* ---------- Composer ---------- */
+    .composer{flex:none;border-top:1px solid var(--border);padding:10px 16px 14px;display:flex;align-items:center;gap:8px;background:#fff;position:relative;}
+    .composer-bar{flex:1;display:flex;align-items:center;gap:2px;background:var(--panel);border:1px solid var(--border);border-radius:26px;padding:5px 8px;min-height:46px;transition:border-color .15s,box-shadow .15s;}
+    .composer-bar:focus-within{border-color:var(--dm);box-shadow:0 0 0 3px var(--dm-soft);background:#fff;}
     .composer-bar .divider{width:1px;height:22px;background:var(--border);margin:0 4px;flex:none;}
-    .composer textarea{
-      flex:1; resize:none; border:none; background:transparent; padding:8px 6px;
-      font-size:14px; max-height:120px; outline:none; line-height:1.4; min-width:0;
-    }
-    .send-btn{
-      width:42px;height:42px;border-radius:50%;border:none;background:var(--dm);color:#fff;
-      display:flex;align-items:center;justify-content:center;cursor:pointer;flex:none;transition:opacity .15s;
-    }
-    .send-btn:disabled{opacity:.4;cursor:default;}
-    .send-btn:not(:disabled):hover{opacity:.88;}
-
-    /* ---------- Generic popover ---------- */
-    .popover{position:fixed;background:#fff;border:1px solid var(--border);border-radius:12px;box-shadow:var(--shadow);min-width:220px;z-index:250;overflow:hidden;display:none;max-height:70vh;overflow-y:auto;}
-    .popover.open{display:block;}
-    .popover .pv-title{padding:10px 14px 4px;font-size:11px;font-weight:700;color:var(--text-faint);}
-    .popover button{width:100%;text-align:right;background:none;border:none;padding:10px 14px;font-size:13.5px;cursor:pointer;color:var(--text);display:flex;align-items:center;gap:10px;}
-    .popover button svg{flex:none;color:var(--text-dim);width:16px;height:16px;}
-    .popover button:hover{background:var(--hover);}
-    .popover button.danger{color:var(--danger);}
-    .popover button.danger svg{color:var(--danger);}
-    .popover .pv-sep{height:1px;background:var(--border);margin:4px 0;}
-    .popover .pv-empty{padding:14px;font-size:12.5px;color:var(--text-dim);text-align:center;}
-
-    .emoji-popover{position:fixed;background:#fff;border:1px solid var(--border);border-radius:14px;box-shadow:var(--shadow);padding:10px;z-index:250;display:none;width:264px;}
-    .emoji-popover.open{display:block;}
-    .emoji-grid{display:grid;grid-template-columns:repeat(8,1fr);gap:1px;max-height:210px;overflow-y:auto;}
-    .emoji-grid button{font-size:19px;background:none;border:none;cursor:pointer;border-radius:8px;padding:5px 0;line-height:1;}
+    .composer textarea{flex:1;resize:none;border:none;background:transparent;padding:8px 6px;font-size:14px;max-height:120px;outline:none;line-height:1.4;min-width:0;}
+    .format-bar{position:absolute;bottom:calc(100% + 6px);inset-inline-start:60px;background:#fff;border:1px solid var(--border);border-radius:14px;box-shadow:var(--shadow-sm);display:none;padding:6px;gap:2px;z-index:70;}
+    .format-bar.open{display:flex;}
+    .format-bar button{width:34px;height:34px;border:none;background:none;border-radius:8px;cursor:pointer;font-size:14px;font-weight:700;color:var(--text-dim);}
+    .format-bar button:hover{background:var(--hover);}
+    .format-bar button b{font-weight:800;} .format-bar button i{font-style:italic;} .format-bar button s{text-decoration:line-through;} .format-bar button code{font-family:monospace;font-size:13px;}
+    .rec-bar{flex:1;display:none;align-items:center;gap:12px;background:#FCE8E6;border:1px solid #F6C9C5;border-radius:26px;padding:10px 16px;min-height:46px;}
+    .rec-bar.on{display:flex;}
+    .rec-bar .rec-dot{width:12px;height:12px;border-radius:50%;background:var(--danger);animation:pulse 1s infinite;}
+    .rec-bar .rec-time{font-size:14px;font-weight:600;color:var(--danger);font-variant-numeric:tabular-nums;}
+    .rec-bar .grow{flex:1;}
+    .rec-bar button{border:none;background:#fff;border-radius:16px;padding:7px 16px;font-size:13px;font-weight:600;cursor:pointer;}
+    .rec-bar button.send{background:var(--danger);color:#fff;}
+    .send-btn{width:44px;height:44px;border-radius:50%;border:none;background:var(--dm);color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;flex:none;transition:opacity .15s,transform .1s;box-shadow:var(--shadow-sm);}
+    .send-btn:disabled{opacity:.35;cursor:default;}
+    .send-btn:not(:disabled):hover{opacity:.9;}
+    .send-btn:not(:disabled):active{transform:scale(.94);}
+    .emoji-pop{position:fixed;background:#fff;border:1px solid var(--border);border-radius:16px;box-shadow:var(--shadow);padding:10px;display:none;z-index:210;width:296px;animation:popIn .14s ease both;}
+    .emoji-pop.open{display:block;}
+    .emoji-tabs{display:flex;gap:4px;margin-bottom:8px;}
+    .emoji-tabs button{flex:1;border:none;background:none;border-radius:8px;padding:5px;cursor:pointer;font-size:15px;}
+    .emoji-tabs button.active{background:var(--dm-bg);}
+    .emoji-grid{display:grid;grid-template-columns:repeat(8,1fr);gap:2px;max-height:180px;overflow-y:auto;}
+    .emoji-grid button{border:none;background:none;font-size:19px;border-radius:8px;cursor:pointer;padding:4px 0;}
     .emoji-grid button:hover{background:var(--hover);}
 
-    .format-popover{position:fixed;background:#fff;border:1px solid var(--border);border-radius:12px;box-shadow:var(--shadow);padding:6px;z-index:250;display:none;gap:2px;}
-    .format-popover.open{display:flex;}
-    .format-popover button{width:34px;height:34px;border:none;background:transparent;border-radius:8px;cursor:pointer;font-size:14px;color:var(--text);display:flex;align-items:center;justify-content:center;}
-    .format-popover button:hover{background:var(--hover);}
-
-    /* ---------- Toasts ---------- */
-    .toast-wrap{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);z-index:400;display:flex;flex-direction:column;gap:8px;align-items:center;pointer-events:none;}
-    .toast{background:#1F2430;color:#fff;padding:11px 16px;border-radius:10px;font-size:13.5px;box-shadow:var(--shadow);display:flex;align-items:center;gap:10px;animation:toastIn .18s ease;max-width:380px;pointer-events:auto;}
-    .toast.error{background:#5F1712;}
-    .toast .t-btn{background:rgba(255,255,255,.16);border:none;color:#fff;border-radius:6px;padding:5px 10px;font-size:12px;cursor:pointer;white-space:nowrap;flex:none;}
-    @keyframes toastIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
-
-    /* ---------- Lightbox ---------- */
-    .lightbox{position:fixed;inset:0;background:rgba(10,12,20,.86);display:none;align-items:center;justify-content:center;z-index:500;}
-    .lightbox.open{display:flex;}
-    .lightbox img{max-width:90vw;max-height:88vh;border-radius:8px;}
-    .lightbox .lb-close{position:absolute;top:20px;left:20px;background:rgba(255,255,255,.16);border:none;color:#fff;width:38px;height:38px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+    /* ---------- Menus / popover ---------- */
+    .ctx-menu{position:fixed;background:#fff;border:1px solid var(--border);border-radius:14px;box-shadow:var(--shadow);min-width:250px;max-width:300px;padding:6px;display:none;z-index:250;animation:popIn .13s ease both;max-height:70vh;overflow-y:auto;}
+    .ctx-menu.open{display:block;}
+    .ctx-menu .mi{display:flex;width:100%;align-items:center;gap:11px;background:none;border:none;padding:10px 12px;font-size:13.5px;cursor:pointer;color:var(--text);text-align:right;border-radius:9px;line-height:1.4;}
+    .ctx-menu .mi svg{color:var(--gicon);flex:none;}
+    .ctx-menu .mi small{display:block;color:var(--text-faint);font-size:11px;font-weight:400;}
+    .ctx-menu .mi:hover{background:var(--hover);}
+    .ctx-menu .mi.danger{color:var(--danger);} .ctx-menu .mi.danger svg{color:var(--danger);}
+    .ctx-menu .sep{height:1px;background:var(--border-soft);margin:5px 8px;}
+    .ctx-menu .mi .sw{margin-inline-start:auto;}
+    .ctx-menu .mi .em{font-size:17px;}
 
     /* ---------- Modal ---------- */
-    .overlay{position:fixed;inset:0;background:rgba(20,25,40,.42);display:none;align-items:center;justify-content:center;z-index:80;}
+    .overlay{position:fixed;inset:0;background:rgba(20,25,40,.45);display:none;align-items:center;justify-content:center;z-index:180;}
     .overlay.open{display:flex;}
-    .modal{background:#fff;border-radius:18px;width:420px;max-width:92vw;max-height:86vh;display:flex;flex-direction:column;box-shadow:var(--shadow);}
-    .modal-head{padding:18px 20px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;}
+    .modal{background:#fff;border-radius:20px;width:430px;max-width:92vw;max-height:86vh;display:flex;flex-direction:column;box-shadow:var(--shadow);animation:fadeUp .2s ease both;}
+    .modal-head{padding:18px 20px;border-bottom:1px solid var(--border-soft);display:flex;justify-content:space-between;align-items:center;}
     .modal-head h3{margin:0;font-size:16px;}
     .modal-head button{background:none;border:none;cursor:pointer;color:var(--text-dim);padding:4px;}
     .modal-body{padding:18px 20px;overflow-y:auto;}
-    .modal-body p.hint{margin:0 0 14px;font-size:12.5px;color:var(--text-dim);line-height:1.6;}
     .field{margin-bottom:16px;}
     .field label{display:block;font-size:12.5px;font-weight:600;color:var(--text-dim);margin-bottom:6px;}
-    .field input,.field textarea{
-      width:100%;border:1px solid var(--border);border-radius:10px;padding:10px 12px;font-size:14px;outline:none;
-    }
-    .field input:focus,.field textarea:focus{border-color:var(--dm);}
+    .field input{width:100%;border:1px solid var(--border);border-radius:12px;padding:10px 12px;font-size:14px;outline:none;}
+    .field input:focus{border-color:var(--dm);box-shadow:0 0 0 3px var(--dm-soft);}
     .chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;}
-    .chip{
-      display:flex;align-items:center;gap:6px;background:var(--dm-bg);color:var(--dm);
-      padding:5px 8px 5px 10px;border-radius:16px;font-size:12.5px;font-weight:500;
-    }
+    .chip{display:flex;align-items:center;gap:6px;background:var(--dm-bg);color:var(--dm);padding:5px 8px 5px 10px;border-radius:16px;font-size:12.5px;font-weight:500;animation:popIn .15s ease both;}
     .chip button{background:none;border:none;cursor:pointer;color:var(--dm);display:flex;padding:0;}
-    .user-results{border:1px solid var(--border);border-radius:10px;margin-top:8px;max-height:160px;overflow-y:auto;}
+    .user-results{border:1px solid var(--border);border-radius:12px;margin-top:8px;max-height:160px;overflow-y:auto;}
     .user-result{display:flex;align-items:center;gap:10px;padding:9px 12px;cursor:pointer;}
     .user-result:hover{background:var(--hover);}
     .user-result .conv-avatar{width:30px;height:30px;font-size:12px;}
     .user-result .nm{font-size:13.5px;font-weight:500;}
     .user-result .em{font-size:11.5px;color:var(--text-dim);}
-    .modal-foot{padding:16px 20px;border-top:1px solid var(--border);display:flex;justify-content:flex-start;gap:10px;}
-    .btn{border:none;border-radius:10px;padding:10px 20px;font-size:14px;font-weight:600;cursor:pointer;}
+    .modal-foot{padding:16px 20px;border-top:1px solid var(--border-soft);display:flex;justify-content:flex-start;gap:10px;}
+    .btn{border:none;border-radius:12px;padding:10px 22px;font-size:14px;font-weight:600;cursor:pointer;}
     .btn-primary{background:var(--dm);color:#fff;}
-    .btn-primary:hover{background:#1662C4;}
-    .btn-primary:disabled{opacity:.45;cursor:default;background:var(--dm);}
+    .btn-primary:disabled{opacity:.45;cursor:default;}
     .btn-ghost{background:var(--panel);color:var(--text);}
-    .btn-ghost:hover{background:var(--hover);}
-    .info-row{display:flex;justify-content:space-between;gap:12px;padding:9px 0;border-bottom:1px solid var(--border);font-size:13.5px;}
-    .info-row:last-child{border-bottom:none;}
-    .info-row span:first-child{color:var(--text-dim);}
-    .info-row span:last-child{font-weight:600;text-align:left;}
+
+    /* ---------- Toasts & connection ---------- */
+    #toasts{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:8px;z-index:300;pointer-events:none;}
+    .toast{background:#28303B;color:#fff;border-radius:14px;padding:11px 18px;font-size:13.5px;box-shadow:var(--shadow);display:flex;align-items:center;gap:14px;animation:fadeUp .2s ease both;pointer-events:auto;max-width:88vw;}
+    .toast button{border:none;background:none;color:#8AB4F8;font-weight:600;cursor:pointer;font-size:13.5px;}
+    #connPill{position:fixed;bottom:84px;inset-inline-start:18px;background:#28303B;color:#fff;border-radius:18px;padding:7px 14px;font-size:12.5px;display:none;align-items:center;gap:8px;z-index:90;box-shadow:var(--shadow-sm);}
+    #connPill.on{display:flex;}
+    #connPill i{width:8px;height:8px;border-radius:50%;background:#F9AB00;animation:pulse 1s infinite;}
+
+    /* ---------- Popout mode ---------- */
+    body.popout header.topbar,body.popout aside.sidebar{display:none;}
+    #popClose{display:none;}
+    body.popout #popClose{display:flex;}
 
     /* ---------- Responsive ---------- */
-    @media (max-width: 760px){
-      aside.sidebar{position:absolute; inset:60px 0 0 0; width:100%; z-index:10;}
+    @media (max-width:760px){
+      aside.sidebar{position:absolute;inset:60px 0 0 0;width:100%;z-index:10;}
       #app.chat-open aside.sidebar{display:none;}
       #app:not(.chat-open) main.main{display:none;}
       #backBtn{display:flex;}
-      .msg-row-wrap{max-width:86%;}
-      .icon-pill-group{display:none;}
+      .msg-row{max-width:84%;}
+      .side-panel{width:100%;max-width:100%;}
+      .icon-pill-group .icon-btn:nth-child(n+3){display:none;}
     }
   </style>
 </head>
@@ -447,13 +321,18 @@
         <svg viewBox="0 0 24 24" fill="none"><path d="M4 5h16a1 1 0 011 1v9a1 1 0 01-1 1H9l-5 4v-4H4a1 1 0 01-1-1V6a1 1 0 011-1z" fill="#fff"/></svg>
       </div>
       <h1>ברוכים הבאים</h1>
-      <p>מתחברים עם חשבון גוגל כדי לפתוח את הצ'אטים, הקבוצות והמרחבים שלכם.</p>
+      <p>מתחברים עם חשבון גוגל כדי לפתוח את הצ'אטים,<br>הקבוצות והמרחבים שלכם.</p>
       <div id="gsiButtonHolder"></div>
+      <div class="login-feats">
+        <span><i></i>צ'אטים אישיים</span>
+        <span><i></i>קבוצות</span>
+        <span><i></i>מרחבים משותפים</span>
+      </div>
     </div>
   </div>
 
   <!-- ============ APP ============ -->
-  <div id="app">
+  <div id="app" data-density="comfortable">
     <header class="topbar">
       <div class="brand">
         <div class="brand-mark">
@@ -465,81 +344,57 @@
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
         <input id="searchInput" type="text" placeholder="חיפוש בצ'אטים ובאנשים">
       </div>
-      <div class="topbar-actions">
-        <div class="me-menu-wrap">
-          <img id="meAvatar" class="me-avatar" src="" alt="">
-          <div class="me-menu" id="meMenu">
-            <div class="who"><img id="meMenuAvatar" src="" alt=""><div><b id="meName"></b><span id="meEmail"></span></div></div>
-            <button id="markAllReadBtn">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>
-              סימון הכל כנקרא
-            </button>
-            <button id="notifToggleBtn">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8a6 6 0 00-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 01-3.4 0"/></svg>
-              <span id="notifToggleLabel">הפעלת התראות</span>
-            </button>
-            <div class="sep"></div>
-            <button id="signOutBtn" class="danger">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/></svg>
-              התנתקות
-            </button>
-          </div>
+      <div class="me-menu-wrap">
+        <img id="meAvatar" class="me-avatar" src="" alt="">
+        <div class="me-menu" id="meMenu">
+          <div class="who"><b id="meName"></b><span id="meEmail"></span></div>
+          <button class="mi" data-mact="status">
+            <span class="status-dot" id="meStatusDot"></span>
+            <span id="meStatusText">זמין</span>
+          </button>
+          <button class="mi" data-mact="notif">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8a6 6 0 10-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 01-3.4 0"/></svg>
+            התראות דפדפן
+            <span class="switch sw" id="notifSwitch"></span>
+          </button>
+          <button class="mi" data-mact="density">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+            <span id="densityText">תצוגה נוחה</span>
+          </button>
+          <div class="sep"></div>
+          <button class="mi danger" id="signOutBtn">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/></svg>
+            התנתקות
+          </button>
         </div>
       </div>
     </header>
 
-    <div class="notif-banner" id="notifBanner">
-      <div class="nb-txt">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8a6 6 0 00-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 01-3.4 0"/></svg>
-        <span>לקבל התראה בדפדפן כשמגיעה הודעה חדשה?</span>
-      </div>
-      <div style="display:flex;gap:8px;align-items:center;">
-        <button class="nb-yes" id="notifBannerYes">הפעלה</button>
-        <button class="nb-no" id="notifBannerNo">לא תודה</button>
-      </div>
-    </div>
-
     <div class="body-row">
       <aside class="sidebar">
-        <div class="new-chat-wrap">
-          <button class="new-chat-btn" id="newChatBtn">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 5v14M5 12h14"/></svg>
-            <span class="lbl">צ'אט חדש</span>
-            <svg class="chev" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
-          </button>
+        <button class="new-chat-btn" id="newChatBtn">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+          צ'אט חדש
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+        </button>
+        <div class="chips-row" id="chipsRow">
+          <button class="chip-btn active" data-view="all">הכל</button>
+          <button class="chip-btn" data-view="pinned">מוצמדים</button>
+          <button class="chip-btn" data-view="starred">מסומנים</button>
+          <button class="chip-btn" data-view="unread">לא נקראו</button>
         </div>
 
-        <div class="section" data-section="shortcuts">
-          <div class="section-head">
-            <span class="head-title">קיצורי דרך</span>
-            <button class="collapse-btn" data-section="shortcuts" title="כיווץ/הרחבה">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M6 9l6 6 6-6"/></svg>
-            </button>
-          </div>
-          <div class="section-list" id="shortcutsList">
-            <div class="nav-home active" id="navHome">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/></svg>
-              בית
-            </div>
-            <div class="nav-item" id="navMentions">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M16 12v1.5a2.5 2.5 0 005 0V12a9 9 0 10-4 7.5"/></svg>
-              תיוגים
-              <span class="hint" title="מבוסס על ההודעה האחרונה בכל שיחה בלבד">@</span>
-            </div>
-            <div class="nav-item" id="navStarred">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 21 12 17.77 5.82 21 7 14.14l-5-4.87 6.91-1.01L12 2z"/></svg>
-              מסומן בכוכב
-              <span class="hint" title="נשמר במכשיר הזה בלבד">מקומי</span>
-            </div>
-          </div>
+        <div class="nav-home active" id="navHome">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/></svg>
+          בית
         </div>
 
-        <div class="section" data-type="dm" data-section="dm">
-          <div class="section-head">
-            <span class="head-title">צ'אטים אישיים</span>
-            <button class="collapse-btn" data-section="dm" title="כיווץ/הרחבה">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M6 9l6 6 6-6"/></svg>
-            </button>
+        <div class="section" data-type="dm">
+          <div class="section-head" data-collapse="dm">
+            <div class="sh-right">
+              <span class="sec-arrow"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg></span>
+              <span>צ'אטים אישיים</span>
+            </div>
             <button class="new-btn" data-type="dm" title="צ'אט חדש">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M12 5v14M5 12h14"/></svg>
             </button>
@@ -547,12 +402,12 @@
           <div class="section-list" id="listDm"></div>
         </div>
 
-        <div class="section" data-type="group" data-section="group">
-          <div class="section-head">
-            <span class="head-title">קבוצות</span>
-            <button class="collapse-btn" data-section="group" title="כיווץ/הרחבה">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M6 9l6 6 6-6"/></svg>
-            </button>
+        <div class="section" data-type="group">
+          <div class="section-head" data-collapse="group">
+            <div class="sh-right">
+              <span class="sec-arrow"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg></span>
+              <span>קבוצות</span>
+            </div>
             <button class="new-btn" data-type="group" title="קבוצה חדשה">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M12 5v14M5 12h14"/></svg>
             </button>
@@ -560,12 +415,12 @@
           <div class="section-list" id="listGroup"></div>
         </div>
 
-        <div class="section" data-type="space" data-section="space">
-          <div class="section-head">
-            <span class="head-title">מרחבים</span>
-            <button class="collapse-btn" data-section="space" title="כיווץ/הרחבה">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M6 9l6 6 6-6"/></svg>
-            </button>
+        <div class="section" data-type="space">
+          <div class="section-head" data-collapse="space">
+            <div class="sh-right">
+              <span class="sec-arrow"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg></span>
+              <span>מרחבים</span>
+            </div>
             <button class="new-btn" data-type="space" title="מרחב חדש">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M12 5v14M5 12h14"/></svg>
             </button>
@@ -577,110 +432,112 @@
       <main class="main">
         <div class="home-view" id="homeView">
           <div class="home-greet">
-            <div>
-              <h2 id="homeTitle">שלום, <span id="greetName"></span></h2>
-              <p id="homeSubtitle">הנה כל השיחות שלך, מהעדכנית ביותר</p>
-            </div>
+            <h2>שלום, <span id="greetName"></span></h2>
+            <p>הנה כל השיחות שלך, מהעדכנית ביותר</p>
+          </div>
+          <div class="home-chips">
+            <button class="chip-btn active" data-hview="all">הכל</button>
+            <button class="chip-btn" data-hview="mentions">אזכורים (בערך)</button>
+            <button class="chip-btn" data-hview="unread">לא נקראו</button>
           </div>
           <div class="home-list" id="homeList"></div>
         </div>
 
         <div class="chat-header" id="chatHeader" style="display:none;">
+          <button id="backBtn">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+          </button>
           <div class="icon-pill-group">
-            <button class="icon-btn" id="pinnedBtn" title="הודעות מוצמדות">
+            <button class="icon-btn" id="btnPinned" title="הודעות מוצמדות">
               <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 17v5M8 3h8l-1 6 3 3v2H6v-2l3-3-1-6z"/></svg>
             </button>
-            <button class="icon-btn" id="densityBtn" title="צפיפות הודעות">
-              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
+            <button class="icon-btn" id="btnHistory" title="ניווט לפי תאריך">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>
             </button>
-            <button class="icon-btn" id="filesBtn" title="תמונות ששותפו בשיחה">
+            <button class="icon-btn" id="btnFiles" title="קבצים ותמונות">
               <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 7a2 2 0 012-2h4l2 2h8a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2V7z"/></svg>
             </button>
-            <button class="icon-btn" id="videoCallBtn" title="שיחת וידאו ב-Meet">
+            <button class="icon-btn" id="btnMeet" title="פגישת וידאו חדשה">
               <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="6" width="14" height="12" rx="2"/><path d="M16 10l6-4v12l-6-4"/></svg>
             </button>
           </div>
           <div class="header-spacer"></div>
           <div class="header-tools">
-            <button id="backBtn">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
-            </button>
-            <div class="who" id="chatWhoBtn" title="פרטי שיחה">
+            <div class="who" id="chatWho">
               <div class="conv-avatar" id="chatAvatar"></div>
-              <div class="titles">
+              <div class="titles" id="chatTitles">
                 <b id="chatTitle"></b>
                 <span id="chatSubtitle"></span>
               </div>
+              <span class="chevron">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+              </span>
             </div>
-            <span class="chevron" id="chatChevronBtn" title="אפשרויות שיחה">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
-            </span>
-            <button class="icon-btn" id="searchChatBtn" title="חיפוש בשיחה">
+            <button class="icon-btn" id="btnChatSearch" title="חיפוש בצ'אט">
               <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+            </button>
+            <button class="icon-btn" id="btnDensity" title="שינוי צפיפות תצוגה">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
+            </button>
+            <button class="icon-btn" id="btnKebab" title="אפשרויות נוספות">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="1.8"/><circle cx="12" cy="12" r="1.8"/><circle cx="12" cy="19" r="1.8"/></svg>
+            </button>
+            <button class="icon-btn" id="popClose" title="סגירת החלון">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
             </button>
           </div>
         </div>
 
-        <div class="search-bar" id="searchBar">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
-          <input id="chatSearchInput" type="text" placeholder="חיפוש בהודעות בשיחה זו">
-          <span class="s-count" id="searchCount"></span>
-          <button class="nav" id="searchPrevBtn" title="קודם">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M18 15l-6-6-6 6"/></svg>
-          </button>
-          <button class="nav" id="searchNextBtn" title="הבא">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M6 9l6 6 6-6"/></svg>
-          </button>
-          <button class="close-x" id="searchCloseBtn">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
-          </button>
-        </div>
-
-        <div class="pinned-panel" id="pinnedPanel">
-          <div class="pp-head">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 17v5M8 3h8l-1 6 3 3v2H6v-2l3-3-1-6z"/></svg>
-            הודעות מוצמדות (מקומי)
+        <div class="side-panel" id="sidePanel">
+          <div class="panel-head">
+            <b id="panelTitle"></b>
+            <button class="icon-btn" id="panelClose" title="סגירה">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+            </button>
           </div>
-          <div id="pinnedList"></div>
+          <div class="panel-body" id="panelBody"></div>
         </div>
 
         <div class="messages" id="messagesEl" style="display:none;"></div>
 
-        <div class="reply-preview" id="replyPreview">
-          <div class="rp-main">
-            <b id="replyName"></b>
-            <span id="replyText"></span>
-          </div>
-          <button id="replyCancelBtn">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
-          </button>
-        </div>
-
         <div class="composer" id="composer" style="display:none;">
-          <button class="send-btn" id="sendBtn" disabled>
+          <div class="format-bar" id="formatBar">
+            <button data-fmt="**" title="מודגש"><b>B</b></button>
+            <button data-fmt="_" title="נטוי"><i>i</i></button>
+            <button data-fmt="~" title="קו חוצה"><s>S</s></button>
+            <button data-fmt="`" title="קוד"><code>&lt;&gt;</code></button>
+          </div>
+          <button class="send-btn" id="sendBtn" disabled title="שליחה">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 2L11 13"/><path d="M22 2l-7 20-4-9-9-4 20-7z"/></svg>
           </button>
-          <div class="composer-bar">
+          <div class="rec-bar" id="recBar">
+            <span class="rec-dot"></span>
+            <span class="rec-time" id="recTime">0:00</span>
+            <span class="grow"></span>
+            <button id="recCancel">ביטול</button>
+            <button class="send" id="recStop">שליחה</button>
+          </div>
+          <div class="composer-bar" id="composerBar">
             <textarea id="msgInput" rows="1" placeholder="ההודעה שלך"></textarea>
             <span class="divider"></span>
-            <button class="icon-btn" id="micBtn" title="הכתבה קולית">
+            <button class="icon-btn" id="micBtn" title="הקלטת הודעה קולית">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0014 0M12 18v3"/></svg>
             </button>
-            <button class="icon-btn" id="attachBtn" title="קובץ מצורף">
+            <button class="icon-btn" id="fileBtn" title="צירוף קובץ">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11l-9 9a4 4 0 01-6-6l9-9a3 3 0 014 4l-9 9a2 2 0 01-3-3l8-8"/></svg>
             </button>
-            <button class="icon-btn" id="imageBtn" title="תמונה">
+            <button class="icon-btn" id="imgBtn" title="שליחת תמונה">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
             </button>
             <button class="icon-btn" id="emojiBtn" title="אימוג'י">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M8 14s1.5 2 4 2 4-2 4-2M9 9h.01M15 9h.01"/></svg>
             </button>
-            <button class="icon-btn" id="formatBtn" title="פורמט">
+            <button class="icon-btn" id="fmtBtn" title="עיצוב טקסט">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M6 4h9a4 4 0 010 8H6z"/><path d="M6 12h10a4 4 0 010 8H6z"/></svg>
             </button>
           </div>
-          <input type="file" id="fileInputAny" style="display:none;">
-          <input type="file" id="fileInputImage" accept="image/*" style="display:none;">
+          <input type="file" id="imgInput" accept="image/*" style="display:none;">
+          <input type="file" id="fileInput" style="display:none;">
         </div>
       </main>
     </div>
@@ -718,62 +575,13 @@
     </div>
   </div>
 
-  <!-- ============ FORWARD MODAL ============ -->
-  <div class="overlay" id="forwardOverlay">
-    <div class="modal">
-      <div class="modal-head">
-        <h3>העברת הודעה</h3>
-        <button id="forwardClose">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
-        </button>
-      </div>
-      <div class="modal-body">
-        <p class="hint">בחר/י שיחה להעברת ההודעה אליה:</p>
-        <div id="forwardList"></div>
-      </div>
-      <div class="modal-foot">
-        <button class="btn btn-ghost" id="forwardCancelBtn">ביטול</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- ============ CONVERSATION INFO MODAL ============ -->
-  <div class="overlay" id="infoOverlay">
-    <div class="modal">
-      <div class="modal-head">
-        <h3>פרטי שיחה</h3>
-        <button id="infoClose">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
-        </button>
-      </div>
-      <div class="modal-body" id="infoBody"></div>
-      <div class="modal-foot">
-        <button class="btn btn-ghost" id="infoCloseBtn">סגירה</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- ============ GENERIC POPOVER / EMOJI / FORMAT ============ -->
-  <div class="popover" id="genericPopover"></div>
-  <div class="emoji-popover" id="emojiPopover">
+  <div class="ctx-menu" id="ctxMenu"></div>
+  <div class="emoji-pop" id="emojiPop">
+    <div class="emoji-tabs" id="emojiTabs"></div>
     <div class="emoji-grid" id="emojiGrid"></div>
   </div>
-  <div class="format-popover" id="formatPopover">
-    <button data-wrap="*" title="מודגש (Bold)"><b>B</b></button>
-    <button data-wrap="_" title="נטוי (Italic)"><i>I</i></button>
-    <button data-wrap="~" title="קו חוצה (Strikethrough)"><s>S</s></button>
-    <button data-wrap="`" title="קוד (Code)">&lt;/&gt;</button>
-  </div>
-
-  <!-- ============ LIGHTBOX ============ -->
-  <div class="lightbox" id="lightbox">
-    <button class="lb-close" id="lightboxClose">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
-    </button>
-    <img id="lightboxImg" src="" alt="">
-  </div>
-
-  <div class="toast-wrap" id="toastWrap"></div>
+  <div id="toasts"></div>
+  <div id="connPill"><i></i>מתחבר מחדש…</div>
 
 <script>
 /* ===================== CONFIG ===================== */
@@ -782,169 +590,9 @@ const GOOGLE_CLIENT_ID = '426523025549-7c50rkn7cun4vmm2r802u0ij6egjehtg.apps.goo
 const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby5NxYO9t8Pm4ZbJ-CTnczuZXN47kEaGxuUVAWaXN9RnZyfzYBrjHDN0RLQHh8Ze1s25Q/exec';
 const AVATAR_COLORS = ['#1A73E8','#DB6E12','#7C3AED','#0F9D58','#D93025','#00838F','#8E24AA','#5C6BC0'];
 const TYPE_LABEL = { dm: 'צ׳אט אישי', group: 'קבוצה', space: 'מרחב' };
-const MAX_IMG_BYTES = 18000;   // מגבלה שמרנית לתמונות מוטבעות (ראו הסבר בהודעה למשתמש)
-const EMOJI_LIST = ['😀','😁','😂','🤣','😊','😍','😘','😉','😎','🤩','🥳','😇','🙂','🙃','😅','😌','🤗','🤔','🤨','😐','😴','😪','🥺','😢','😭','😤','😠','😱','🤯','🥶','🥵','😷','🤒','🤕','🤢','🥴','😵','🤠','😈','👻','💀','👍','👎','👏','🙏','💪','🤝','✌️','🤞','👌','✋','🖐️','🤙','🫶','❤️','🧡','💛','💚','💙','💜','🖤','🤍','💔','💯','🔥','✨','🎉','🎊','🎂','🍕','☕','🍺','🥳','⚽','🏆','📌','✅','❌','❓','❗'];
-const QUICK_REACTIONS = ['👍','❤️','😂','😮','😢','🙏'];
+const MAX_IMG_CHARS = 6000; // תמונות נשלחות בתוך טקסט ההודעה — מוגבל בגודל (מגבלת ה-GET של Apps Script)
 
-/* ===================== TOASTS ===================== */
-function showToast(msg, opts){
-  opts = opts || {};
-  const wrap = document.getElementById('toastWrap');
-  const el = document.createElement('div');
-  el.className = 'toast' + (opts.error ? ' error' : '');
-  const span = document.createElement('span');
-  span.textContent = msg;
-  el.appendChild(span);
-  if(opts.actionLabel && opts.onAction){
-    const btn = document.createElement('button');
-    btn.className = 't-btn';
-    btn.textContent = opts.actionLabel;
-    btn.addEventListener('click', function(){ opts.onAction(); el.remove(); });
-    el.appendChild(btn);
-  }
-  wrap.appendChild(el);
-  setTimeout(function(){ el.remove(); }, opts.duration || 4200);
-}
-
-/* ===================== LOCAL-ONLY STATE (per browser) =====================
-   הערה חשובה: הפריטים הבאים (הצמדה/כוכב/השתקה לשיחות, הצמדת הודעות,
-   ריאקציות) נשמרים רק בדפדפן הזה באמצעות localStorage. אין כרגע נקודת קצה
-   בשרת ה-Apps Script לשמור אותם עבור כלל המשתתפים בשיחה, ולכן הם לא
-   מסתנכרנים בין מכשירים ולא נראים לצד השני. */
-function lsGet(key, fallback){
-  try{ const v = localStorage.getItem(key); return v ? JSON.parse(v) : fallback; }
-  catch(e){ return fallback; }
-}
-function lsSet(key, value){
-  try{ localStorage.setItem(key, JSON.stringify(value)); }catch(e){}
-}
-function starredConvos(){ return lsGet('gc_starredConvos', []); }
-function isConvoStarred(id){ return starredConvos().indexOf(id) !== -1; }
-function toggleStarConvo(id){
-  const list = starredConvos();
-  const idx = list.indexOf(id);
-  if(idx === -1) list.push(id); else list.splice(idx,1);
-  lsSet('gc_starredConvos', list);
-  return idx === -1;
-}
-function pinnedConvos(){ return lsGet('gc_pinnedConvos', []); }
-function isConvoPinned(id){ return pinnedConvos().indexOf(id) !== -1; }
-function toggleConvoPin(id){
-  const list = pinnedConvos();
-  const idx = list.indexOf(id);
-  if(idx === -1) list.push(id); else list.splice(idx,1);
-  lsSet('gc_pinnedConvos', list);
-  return idx === -1;
-}
-function mutedConvos(){ return lsGet('gc_mutedConvos', []); }
-function isConvoMuted(id){ return mutedConvos().indexOf(id) !== -1; }
-function toggleConvoMute(id){
-  const list = mutedConvos();
-  const idx = list.indexOf(id);
-  if(idx === -1) list.push(id); else list.splice(idx,1);
-  lsSet('gc_mutedConvos', list);
-  return idx === -1;
-}
-function pinnedMessagesFor(spaceId){ return lsGet('gc_pinnedMsgs_' + spaceId, []); }
-function isMessagePinned(spaceId, messageId){
-  return pinnedMessagesFor(spaceId).some(function(m){ return m.messageId === messageId; });
-}
-function toggleMessagePin(spaceId, messageId, senderName, text){
-  const list = pinnedMessagesFor(spaceId);
-  const idx = list.findIndex(function(m){ return m.messageId === messageId; });
-  let nowPinned;
-  if(idx === -1){ list.push({messageId:messageId, senderName:senderName, text:text}); nowPinned = true; }
-  else { list.splice(idx,1); nowPinned = false; }
-  lsSet('gc_pinnedMsgs_' + spaceId, list);
-  return nowPinned;
-}
-function starredMessages(spaceId){ return lsGet('gc_starredMsgs_' + spaceId, []); }
-function isMessageStarred(spaceId, messageId){ return starredMessages(spaceId).indexOf(messageId) !== -1; }
-function toggleMessageStar(spaceId, messageId){
-  const list = starredMessages(spaceId);
-  const idx = list.indexOf(messageId);
-  if(idx === -1) list.push(messageId); else list.splice(idx,1);
-  lsSet('gc_starredMsgs_' + spaceId, list);
-  return idx === -1;
-}
-function reactionsFor(messageId){ return lsGet('gc_react_' + messageId, {}); }
-function toggleReaction(messageId, emoji){
-  const map = reactionsFor(messageId);
-  map[emoji] = !map[emoji];
-  lsSet('gc_react_' + messageId, map);
-  return map;
-}
-function densityMode(){ return lsGet('gc_density', 'cozy'); }
-function setDensityMode(m){ lsSet('gc_density', m); }
-function sectionCollapsed(section){ return lsGet('gc_collapsed_' + section, false); }
-function setSectionCollapsed(section, val){ lsSet('gc_collapsed_' + section, val); }
-
-/* ===================== GENERIC POPOVER ===================== */
-let popoverOpenTrigger = null;
-function openPopover(anchorEl, items, opts){
-  opts = opts || {};
-  const pop = document.getElementById('genericPopover');
-  let html = '';
-  if(opts.title) html += '<div class="pv-title">' + escapeHtml(opts.title) + '</div>';
-  items.forEach(function(it, i){
-    if(it.sep){ html += '<div class="pv-sep"></div>'; return; }
-    html += '<button data-i="' + i + '" class="' + (it.danger ? 'danger' : '') + '">' + (it.icon || '') + '<span>' + escapeHtml(it.label) + '</span></button>';
-  });
-  if(!items.length) html += '<div class="pv-empty">אין כאן כלום כרגע</div>';
-  pop.innerHTML = html;
-  const r = anchorEl.getBoundingClientRect();
-  pop.style.display = 'block';
-  const popW = pop.offsetWidth || 220;
-  let left = r.right - popW;
-  if(left < 8) left = 8;
-  if(left + popW > window.innerWidth - 8) left = window.innerWidth - popW - 8;
-  let top = r.bottom + 6;
-  pop.style.left = left + 'px';
-  pop.style.top = top + 'px';
-  pop.classList.add('open');
-  if(pop.getBoundingClientRect().bottom > window.innerHeight - 8){
-    pop.style.top = Math.max(8, r.top - pop.offsetHeight - 6) + 'px';
-  }
-  pop.querySelectorAll('button[data-i]').forEach(function(btn){
-    btn.addEventListener('click', function(e){
-      e.stopPropagation();
-      closePopover();
-      const it = items[+btn.dataset.i];
-      if(it && it.onClick) it.onClick();
-    });
-  });
-  popoverOpenTrigger = anchorEl;
-}
-function closePopover(){
-  const pop = document.getElementById('genericPopover');
-  pop.classList.remove('open');
-  popoverOpenTrigger = null;
-}
-document.addEventListener('click', function(e){
-  if(!e.target.closest('#genericPopover') && !e.target.closest('.popover-trigger')) closePopover();
-  if(!e.target.closest('#emojiPopover') && !e.target.closest('.emoji-trigger')) closeEmojiPopover();
-  if(!e.target.closest('#formatPopover') && !e.target.closest('#formatBtn')) closeFormatPopover();
-  if(!e.target.closest('.me-menu-wrap')) document.getElementById('meMenu').classList.remove('open');
-  if(!e.target.closest('.new-chat-wrap')) closeNewChatMenu();
-});
-document.addEventListener('keydown', function(e){
-  if(e.key === 'Escape'){
-    closePopover(); closeEmojiPopover(); closeFormatPopover(); closeNewChatMenu();
-    document.getElementById('meMenu').classList.remove('open');
-    if(document.getElementById('modalOverlay').classList.contains('open')) closeModal();
-    if(document.getElementById('forwardOverlay').classList.contains('open')) closeForwardModal();
-    if(document.getElementById('infoOverlay').classList.contains('open')) closeInfoModal();
-    if(document.getElementById('lightbox').classList.contains('open')) closeLightbox();
-    if(document.getElementById('searchBar').classList.contains('open')) closeChatSearch();
-  }
-});
-
-/* ===================== API (מחליף את google.script.run) ===================== */
-// חשוב: משתמשים ב-GET עם query string ולא ב-POST עם גוף JSON.
-// הסיבה: script.google.com/.../exec מגיב תמיד בהפניית 302 לכתובת
-// googleusercontent.com הפנימית, ובהפניית 302 הדפדפן הופך POST ל-GET
-// וזורק את גוף הבקשה (כך זה מוגדר בתקן fetch) — כלומר ה-JSON שנשלח
-// בגוף הייתה פשוט אובדת בדרך. עם GET אין גוף שיכול ללכת לאיבוד.
+/* ===================== API ===================== */
 function callApi(action, params){
   const qs = 'action=' + encodeURIComponent(action) +
              '&params=' + encodeURIComponent(JSON.stringify(params || []));
@@ -960,30 +608,54 @@ function callApi(action, params){
 }
 function handleApiError(err){
   console.error(err);
-  showToast((err && err.message) ? err.message : 'שגיאה בתקשורת עם השרת', {error:true, duration:6000});
+  toast('שגיאה: ' + (err && err.message ? err.message : err));
+}
+
+/* ===================== LOCAL STORAGE (לפי משתמש) ===================== */
+let LS_KEY = 'gc_prefs';
+function lsLoad(){
+  if(ME) LS_KEY = 'gc_' + ME.email.toLowerCase();
+  try { return JSON.parse(localStorage.getItem(LS_KEY)) || null; } catch(e){ return null; }
+}
+function lsSave(){
+  try { localStorage.setItem(LS_KEY, JSON.stringify(SS)); }
+  catch(e){ /* מיצוי נפח — מתעלמים בשקט */ }
+}
+let SS = { prefs:{ density:'comfortable', notif:false, status:'available', collapsed:{}, view:'all', hview:'all' },
+           spaces:{}, pinnedMsgs:{}, reactions:{} };
+let MEDIA = {}; // messageId -> objectURL (הקלטות קוליות — זמינות בסשן הנוכחי בלבד)
+
+function sState(sid){
+  if(!SS.spaces[sid]) SS.spaces[sid] = { pinned:false, starred:false, muted:false, hidden:false, markedUnread:false };
+  return SS.spaces[sid];
+}
+function unreadOf(s){
+  const st = SS.spaces[s.spaceId] || {};
+  let u = s.unread || 0;
+  if(st.markedUnread) u = Math.max(1, u);
+  return u;
+}
+function updateTitle(){
+  let n = 0;
+  SPACES.forEach(function(s){ const st = SS.spaces[s.spaceId]||{}; if(!st.muted) n += unreadOf(s); });
+  document.title = (n > 0 ? '('+n+') ' : '') + "צ'אט";
 }
 
 /* ===================== STATE ===================== */
-let ME = null;                 // {email,name,picture}
-let SPACES = [];                // bootstrap list
-let PREV_SPACES_MAP = null;     // spaceId -> {updatedAt,unread} snapshot for notification diffing
-let ACTIVE_SPACE = null;        // spaceId
-let MESSAGES = [];              // currently open conversation messages
-let LAST_TS = 0;                // last message timestamp for polling
+let ME = null;
+let SPACES = [];
+let ACTIVE_SPACE = null;
+let MESSAGES = [];
+let LAST_TS = 0;
 let POLL_TIMER = null;
 let LIST_TIMER = null;
-let PENDING_TYPE = null;        // for modal
-let SELECTED_MEMBERS = [];      // for modal
-let RENDERED_IDS = new Set();   // messageIds currently in the DOM, for the open conversation
-let GROUP_KEY = null;           // last "sender|day" group key rendered, for grouping headers/avatars
-let GROUP_TS = 0;               // timestamp of the last message in the current visual group
-let CURRENT_VIEW = 'home';      // 'home' | 'mentions' | 'starred' | 'chat'
-let REPLY_TO = null;            // {senderName, text}
-let SEARCH_MATCHES = [];
-let SEARCH_INDEX = -1;
-let RECOGNITION = null;
-let IS_RECORDING = false;
-let BOOT_DONE = false;          // מונע הצגת התראות מיד עם הכניסה הראשונה
+let PENDING_TYPE = null;
+let SELECTED_MEMBERS = [];
+let RENDERED_IDS = new Set();
+let GROUP_KEY = null;
+let GROUP_TS = 0;
+let PENDING_HASH_SPACE = null;
+let SEARCH_Q = '';
 
 /* ===================== UTIL ===================== */
 function colorFor(str){
@@ -996,10 +668,8 @@ function initials(name){
   const parts = name.trim().split(' ');
   return (parts[0][0] + (parts[1]?parts[1][0]:'')).toUpperCase();
 }
-function avatarNode(name, picture, size){
-  if(picture){
-    return '<img src="'+escapeHtml(picture)+'" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">';
-  }
+function avatarNode(name, picture){
+  if(picture) return '<img src="'+escapeHtml(picture)+'" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">';
   return initials(name);
 }
 function escapeHtml(s){
@@ -1009,68 +679,149 @@ function escapeHtml(s){
 }
 function timeLabel(ts){
   if(!ts) return '';
-  const d = new Date(ts);
-  const now = new Date();
-  const sameDay = d.toDateString() === now.toDateString();
-  if (sameDay) return d.toLocaleTimeString('he-IL',{hour:'2-digit',minute:'2-digit'});
-  const yesterday = new Date(now); yesterday.setDate(now.getDate()-1);
-  if (d.toDateString() === yesterday.toDateString()) return 'אתמול';
+  const d = new Date(ts); const now = new Date();
+  if (d.toDateString() === now.toDateString()) return d.toLocaleTimeString('he-IL',{hour:'2-digit',minute:'2-digit'});
+  const y = new Date(now); y.setDate(now.getDate()-1);
+  if (d.toDateString() === y.toDateString()) return 'אתמול';
   return d.toLocaleDateString('he-IL',{day:'2-digit',month:'2-digit'});
 }
 function dayLabel(ts){
-  const d = new Date(ts);
-  const now = new Date();
+  const d = new Date(ts); const now = new Date();
   if (d.toDateString() === now.toDateString()) return 'היום';
-  const yesterday = new Date(now); yesterday.setDate(now.getDate()-1);
-  if (d.toDateString() === yesterday.toDateString()) return 'אתמול';
+  const y = new Date(now); y.setDate(now.getDate()-1);
+  if (d.toDateString() === y.toDateString()) return 'אתמול';
   return d.toLocaleDateString('he-IL',{day:'2-digit',month:'2-digit',year:'numeric'});
-}
-function fullTimeLabel(ts){
-  const d = new Date(ts);
-  return d.toLocaleDateString('he-IL',{day:'2-digit',month:'2-digit',year:'numeric'}) + ' · ' + d.toLocaleTimeString('he-IL',{hour:'2-digit',minute:'2-digit'});
 }
 function relativeTimeLabel(ts){
   const diffMin = Math.floor((Date.now() - ts) / 60000);
   if (diffMin < 1) return 'עכשיו';
   if (diffMin < 60) return diffMin + ' דקות';
-  const d = new Date(ts);
-  const now = new Date();
+  const d = new Date(ts); const now = new Date();
   if (d.toDateString() === now.toDateString()) return d.toLocaleTimeString('he-IL',{hour:'2-digit',minute:'2-digit'});
-  const yesterday = new Date(now); yesterday.setDate(now.getDate()-1);
-  if (d.toDateString() === yesterday.toDateString()) return 'אתמול ' + d.toLocaleTimeString('he-IL',{hour:'2-digit',minute:'2-digit'});
+  const y = new Date(now); y.setDate(now.getDate()-1);
+  if (d.toDateString() === y.toDateString()) return 'אתמול ' + d.toLocaleTimeString('he-IL',{hour:'2-digit',minute:'2-digit'});
   return d.toLocaleDateString('he-IL',{day:'2-digit',month:'2-digit'});
 }
-function truncate(s, n){
-  s = String(s||'');
-  return s.length > n ? s.slice(0,n) + '…' : s;
+function fmtSize(bytes){
+  if(bytes < 1024) return bytes + ' B';
+  if(bytes < 1048576) return (bytes/1024).toFixed(1) + ' KB';
+  return (bytes/1048576).toFixed(1) + ' MB';
 }
-// טקסט הודעה -> HTML: תמונה מוטבעת / פורמט בסיסי (*מודגש* _נטוי_ ~קו חוצה~ `קוד`) / קישורים לחיצים.
-// ה-escape תמיד קורה קודם, כך שאין סיכון XSS - הפורמט מותקן מעל טקסט כבר "בטוח".
-function formatMessageBody(text){
-  if(text.indexOf('@@IMG@@') === 0){
-    const src = text.slice(7);
-    if(/^data:image\//.test(src)){
-      return '<img class="msg-img" src="'+src.replace(/"/g,'&quot;')+'" onclick="openLightbox(this.src)">';
-    }
+function previewOf(text){
+  const t = text || '';
+  if(t.indexOf('[img:') === 0) return '📷 תמונה';
+  if(t.indexOf('[🎙') === 0) return t.replace(/[\[\]]/g,'');
+  return t;
+}
+
+/* Markdown-לייט: המרה בטוחה (בריחה קודם) — **מודגש** _נטוי_ ~חוצה~ `קוד` + קישורים */
+function mdLite(raw){
+  let t = escapeHtml(raw);
+  const urls = [];
+  t = t.replace(/(https?:\/\/[^\s<]+)/g, function(u){ urls.push(u); return '\x00' + (urls.length-1) + '\x00'; });
+  t = t.replace(/\*\*([^*\n]+)\*\*/g, '<b>$1</b>')
+       .replace(/_([^_\n]+)_/g, '<i>$1</i>')
+       .replace(/~([^~\n]+)~/g, '<s>$1</s>')
+       .replace(/`([^`\n]+)`/g, '<code>$1</code>');
+  t = t.replace(/\x00(\d+)\x00/g, function(_, i){
+    const u = urls[+i];
+    return '<a href="'+u+'" target="_blank" rel="noopener">'+u+'</a>';
+  });
+  return t;
+}
+
+/* ===================== TOASTS ===================== */
+function toast(text, opts){
+  opts = opts || {};
+  const el = document.createElement('div');
+  el.className = 'toast';
+  el.innerHTML = '<span>'+escapeHtml(text)+'</span>';
+  if(opts.action){
+    const b = document.createElement('button');
+    b.textContent = opts.action.label;
+    b.addEventListener('click', function(){ opts.action.fn(); el.remove(); });
+    el.appendChild(b);
   }
-  let h = escapeHtml(text);
-  h = h.replace(/`([^`]+)`/g, '<code>$1</code>');
-  h = h.replace(/\*([^\*\n]+)\*/g, '<b>$1</b>');
-  h = h.replace(/_([^_\n]+)_/g, '<em>$1</em>');
-  h = h.replace(/~([^~\n]+)~/g, '<s>$1</s>');
-  h = h.replace(/(https?:\/\/[^\s<]+)/g, '<a href="$1" target="_blank" rel="noopener">$1</a>');
-  return h;
+  document.getElementById('toasts').appendChild(el);
+  setTimeout(function(){ el.style.opacity = '0'; el.style.transition = 'opacity .3s'; setTimeout(function(){ el.remove(); }, 320); }, opts.ms || (opts.action ? 6000 : 3200));
 }
-function isImageMessage(text){ return String(text||'').indexOf('@@IMG@@') === 0; }
+
+/* ===================== CONNECTION PILL ===================== */
+let connBadAt = 0;
+function connBad(){
+  if(Date.now() - connBadAt < 4000) return;
+  connBadAt = Date.now();
+  document.getElementById('connPill').classList.add('on');
+}
+function connOk(){ document.getElementById('connPill').classList.remove('on'); }
+
+/* ===================== MENU SYSTEM ===================== */
+const ctxMenu = document.getElementById('ctxMenu');
+function openMenu(anchor, items){
+  ctxMenu.innerHTML = items.map(function(it, i){
+    if(it.sep) return '<div class="sep"></div>';
+    return '<button class="mi '+(it.danger?'danger':'')+'" data-mi="'+i+'">' +
+      (it.emoji ? '<span class="em">'+it.emoji+'</span>' : (it.icon||'')) +
+      '<span>'+(it.label||'')+(it.sub?'<small>'+it.sub+'</small>':'')+'</span>' +
+      (it.switchOn !== undefined ? '<span class="switch sw '+(it.switchOn?'on':'')+'"></span>' : '') +
+    '</button>';
+  }).join('');
+  ctxMenu.classList.add('open');
+  ctxMenu.style.visibility = 'hidden';
+  ctxMenu.style.left = '0px'; ctxMenu.style.top = '0px';
+  requestAnimationFrame(function(){
+    const r = anchor.getBoundingClientRect();
+    const mw = ctxMenu.offsetWidth, mh = ctxMenu.offsetHeight;
+    let x = r.left;
+    if(x + mw > window.innerWidth - 8) x = Math.max(8, r.right - mw);
+    let y = r.bottom + 6;
+    if(y + mh > window.innerHeight - 8) y = Math.max(8, r.top - mh - 6);
+    ctxMenu.style.left = x + 'px';
+    ctxMenu.style.top = y + 'px';
+    ctxMenu.style.visibility = 'visible';
+  });
+  ctxMenu.querySelectorAll('[data-mi]').forEach(function(btn){
+    btn.addEventListener('click', function(e){
+      e.stopPropagation();
+      const it = items[+btn.dataset.mi];
+      closeMenu();
+      if(it && it.fn) it.fn();
+    });
+  });
+}
+function closeMenu(){ ctxMenu.classList.remove('open'); }
+ctxMenu.addEventListener('click', function(e){ e.stopPropagation(); });
+
+/* ===================== NOTIFICATIONS ===================== */
+function maybeNotify(space, msg){
+  if(!SS.prefs.notif || typeof Notification === 'undefined' || Notification.permission !== 'granted') return;
+  if(!document.hidden) return;
+  if(!space) return;
+  const st = SS.spaces[space.spaceId] || {};
+  if(st.muted || st.hidden) return;
+  if(msg.senderEmail && msg.senderEmail.toLowerCase() === ME.email.toLowerCase()) return;
+  try{
+    const n = new Notification(space.name || 'הודעה חדשה', {
+      body: previewOf(msg.text).slice(0, 140),
+      tag: space.spaceId
+    });
+    n.onclick = function(){ window.focus(); openSpace(space.spaceId); n.close(); };
+  }catch(e){}
+}
 
 /* ===================== LOGIN ===================== */
 window.onload = function(){
-  google.accounts.id.initialize({
-    client_id: GOOGLE_CLIENT_ID,
-    callback: handleCredential
-  });
+  google.accounts.id.initialize({ client_id: GOOGLE_CLIENT_ID, callback: handleCredential });
   google.accounts.id.renderButton(document.getElementById('gsiButtonHolder'), {
     theme:'outline', size:'large', shape:'pill', text:'signin_with', locale:'he'
+  });
+  if(location.search.indexOf('pop=1') !== -1) document.body.classList.add('popout');
+  const m = location.hash.match(/space=([\w-]+)/);
+  if(m) PENDING_HASH_SPACE = m[1];
+  window.addEventListener('hashchange', function(){
+    const mm = location.hash.match(/space=([\w-]+)/);
+    if(mm && ME && mm[1] !== ACTIVE_SPACE) openSpace(mm[1]);
+    else if(!mm && ME && ACTIVE_SPACE) goHome();
   });
 };
 
@@ -1080,398 +831,302 @@ function decodeJwt(token){
     .split('').map(function(c){ return '%' + ('00'+c.charCodeAt(0).toString(16)).slice(-2); }).join(''));
   return JSON.parse(json);
 }
-
 function handleCredential(resp){
   const payload = decodeJwt(resp.credential);
-  const name = payload.name || payload.email;
-  const picture = payload.picture || '';
   const email = payload.email;
-  callApi('upsertUser', [email, name, picture]).then(function(user){
+  callApi('upsertUser', [email, payload.name || payload.email, payload.picture || '']).then(function(user){
     ME = user;
+    SS = lsLoad() || SS;
+    applyDensity();
     document.getElementById('loginScreen').style.display = 'none';
     document.getElementById('app').classList.add('ready');
     document.getElementById('meAvatar').src = ME.picture || '';
-    document.getElementById('meMenuAvatar').src = ME.picture || '';
     document.getElementById('meName').textContent = ME.name;
     document.getElementById('meEmail').textContent = ME.email;
     document.getElementById('greetName').textContent = ME.name.split(' ')[0];
-    updateNotifToggleLabel();
-    maybeShowNotifBanner();
+    updateStatusUi();
+    updateNotifUi();
     boot();
+    if(PENDING_HASH_SPACE){ const id = PENDING_HASH_SPACE; PENDING_HASH_SPACE = null; openSpace(id); }
   }).catch(handleApiError);
 }
 
-/* ===================== ME MENU ===================== */
-document.getElementById('meAvatar').addEventListener('click', function(e){
-  e.stopPropagation();
+document.getElementById('meAvatar').addEventListener('click', function(){
   document.getElementById('meMenu').classList.toggle('open');
 });
+document.addEventListener('click', function(e){
+  if(!e.target.closest('.me-menu-wrap')) document.getElementById('meMenu').classList.remove('open');
+  if(!e.target.closest('#ctxMenu') && !e.target.closest('#btnKebab') && !e.target.closest('.conv-kebab')) closeMenu();
+  if(!e.target.closest('#emojiPop') && !e.target.closest('#emojiBtn')) document.getElementById('emojiPop').classList.remove('open');
+});
+document.addEventListener('keydown', function(e){
+  if(e.key === 'Escape'){
+    closeMenu();
+    document.getElementById('emojiPop').classList.remove('open');
+    document.getElementById('formatBar').classList.remove('open');
+    document.getElementById('fmtBtn').classList.remove('on');
+    closePanel();
+  }
+});
+
+function updateStatusUi(){
+  const away = SS.prefs.status === 'away';
+  document.getElementById('meStatusDot').classList.toggle('away', away);
+  document.getElementById('meStatusText').textContent = away ? 'לא ליד המחשב' : 'זמין';
+}
+function updateNotifUi(){
+  document.getElementById('notifSwitch').classList.toggle('on', !!SS.prefs.notif);
+}
+document.querySelectorAll('#meMenu .mi[data-mact]').forEach(function(btn){
+  btn.addEventListener('click', function(){
+    const act = btn.dataset.mact;
+    if(act === 'status'){
+      SS.prefs.status = SS.prefs.status === 'away' ? 'available' : 'away';
+      lsSave(); updateStatusUi();
+    } else if(act === 'notif'){
+      if(!SS.prefs.notif && typeof Notification !== 'undefined' && Notification.permission !== 'granted'){
+        Notification.requestPermission().then(function(p){
+          if(p === 'granted'){ SS.prefs.notif = true; toast('ההתראות הופעלו'); }
+          else toast('הרשאת ההתראות נדחתה בדפדפן');
+          lsSave(); updateNotifUi();
+        });
+        return;
+      }
+      SS.prefs.notif = !SS.prefs.notif;
+      lsSave(); updateNotifUi();
+      toast(SS.prefs.notif ? 'ההתראות הופעלו' : 'ההתראות כובו');
+    } else if(act === 'density'){
+      SS.prefs.density = SS.prefs.density === 'compact' ? 'comfortable' : 'compact';
+      lsSave(); applyDensity();
+    }
+  });
+});
+function applyDensity(){
+  document.getElementById('app').dataset.density = SS.prefs.density;
+  document.getElementById('densityText').textContent = SS.prefs.density === 'compact' ? 'תצוגה נוחה' : 'תצוגה צפופה';
+}
 document.getElementById('signOutBtn').addEventListener('click', function(){
   google.accounts.id.disableAutoSelect();
-  location.reload();
-});
-document.getElementById('markAllReadBtn').addEventListener('click', function(){
-  document.getElementById('meMenu').classList.remove('open');
-  markAllRead();
-});
-document.getElementById('notifToggleBtn').addEventListener('click', function(){
-  document.getElementById('meMenu').classList.remove('open');
-  requestNotifPermission(true);
-});
-
-function markAllRead(){
-  if(!SPACES.length){ showToast('אין שיחות לסמן'); return; }
-  Promise.all(SPACES.map(function(s){ return callApi('markRead', [s.spaceId, ME.email]).catch(function(){}); }))
-    .then(function(){ showToast('כל השיחות סומנו כנקראות'); refreshLists(); });
-}
-
-/* ===================== NOTIFICATIONS (דפדפן) =====================
-   כשהודעה חדשה מגיעה בשיחה שאינה פתוחה כרגע (או שהחלון לא בפוקוס), ואם
-   השיחה לא הושתקה, מוצגת התראת דפדפן אמיתית (Notification API). זו
-   תכונה אמיתית שרצה כולה בצד הלקוח - אין צורך בשינוי בשרת. */
-function updateNotifToggleLabel(){
-  const supported = 'Notification' in window;
-  const lbl = document.getElementById('notifToggleLabel');
-  if(!supported){ lbl.textContent = 'התראות לא נתמכות בדפדפן זה'; return; }
-  if(Notification.permission === 'granted') lbl.textContent = 'התראות פעילות ✓';
-  else if(Notification.permission === 'denied') lbl.textContent = 'התראות חסומות (הגדרות דפדפן)';
-  else lbl.textContent = 'הפעלת התראות';
-}
-function requestNotifPermission(manual){
-  if(!('Notification' in window)){ showToast('הדפדפן הזה לא תומך בהתראות'); return; }
-  if(Notification.permission === 'granted'){ if(manual) showToast('התראות כבר פעילות'); return; }
-  if(Notification.permission === 'denied'){ if(manual) showToast('התראות חסומות בהגדרות הדפדפן עבור האתר הזה', {error:true}); return; }
-  Notification.requestPermission().then(function(perm){
-    updateNotifToggleLabel();
-    if(perm === 'granted') showToast('התראות הופעלו');
-  });
-}
-function maybeShowNotifBanner(){
-  if(!('Notification' in window)) return;
-  if(Notification.permission !== 'default') return;
-  if(lsGet('gc_notifBannerDismissed', false)) return;
-  document.getElementById('notifBanner').classList.add('open');
-}
-document.getElementById('notifBannerYes').addEventListener('click', function(){
-  document.getElementById('notifBanner').classList.remove('open');
-  requestNotifPermission(true);
-});
-document.getElementById('notifBannerNo').addEventListener('click', function(){
-  document.getElementById('notifBanner').classList.remove('open');
-  lsSet('gc_notifBannerDismissed', true);
-});
-function notifyNewMessage(space){
-  if(!('Notification' in window) || Notification.permission !== 'granted') return;
-  if(isConvoMuted(space.spaceId)) return;
-  const preview = space.lastMessage ? space.lastMessage.text : '';
-  try{
-    const n = new Notification(space.name || 'הודעה חדשה', {
-      body: isImageMessage(preview) ? '📷 תמונה' : truncate(preview, 120),
-      icon: space.icon || undefined,
-      tag: 'gc-' + space.spaceId
-    });
-    n.onclick = function(){
-      window.focus();
-      openSpace(space.spaceId);
-      n.close();
-    };
-  }catch(e){}
-}
-
-/* ===================== NEW CHAT BUTTON/MENU ===================== */
-function closeNewChatMenu(){
-  closePopover();
-  document.getElementById('newChatBtn').classList.remove('open');
-}
-document.getElementById('newChatBtn').addEventListener('click', function(e){
-  e.stopPropagation();
-  const btn = e.currentTarget;
-  if(popoverOpenTrigger === btn){ closeNewChatMenu(); return; }
-  btn.classList.add('open');
-  openPopover(btn, [
-    { label:'צ׳אט אישי חדש', icon:svgIcon('user'), onClick:function(){ openModal('dm'); } },
-    { label:'קבוצה חדשה', icon:svgIcon('users'), onClick:function(){ openModal('group'); } },
-    { label:'מרחב חדש', icon:svgIcon('space'), onClick:function(){ openModal('space'); } }
-  ]);
-});
-function svgIcon(name){
-  const map = {
-    user:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg>',
-    users:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="8" r="3.2"/><path d="M2.5 20c0-3.3 3-5 6.5-5s6.5 1.7 6.5 5"/><path d="M16 8.2a3 3 0 110 5.9"/><path d="M20.5 20c-.1-2.4-1.4-3.9-3.2-4.6"/></svg>',
-    space:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>',
-    star:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 21 12 17.77 5.82 21 7 14.14l-5-4.87 6.91-1.01L12 2z"/></svg>',
-    pin:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 17v5M8 3h8l-1 6 3 3v2H6v-2l3-3-1-6z"/></svg>',
-    mute:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8a6 6 0 00-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 01-3.4 0"/><path d="M3 3l18 18"/></svg>',
-    bell:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8a6 6 0 00-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 01-3.4 0"/></svg>',
-    check:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>',
-    copy:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15V5a2 2 0 012-2h10"/></svg>',
-    forward:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 6l6 6-6 6"/><path d="M3 12h18M3 12c0-3 2-5 5-5"/></svg>',
-    info:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8h.01M11 12h1v5h1"/></svg>',
-    external:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 4h6v6"/><path d="M20 4L10 14"/><path d="M18 13v5a2 2 0 01-2 2H6a2 2 0 01-2-2V8a2 2 0 012-2h5"/></svg>',
-    search:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>',
-    exit:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/></svg>',
-    trash:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"/><path d="M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2m3 0l-1 14a2 2 0 01-2 2H7a2 2 0 01-2-2L4 6"/></svg>'
-  };
-  return map[name] || '';
-}
-
-/* ===================== SECTION COLLAPSE ===================== */
-document.querySelectorAll('.collapse-btn').forEach(function(btn){
-  const section = btn.dataset.section;
-  const el = btn.closest('.section');
-  if(sectionCollapsed(section)) el.classList.add('collapsed');
-  btn.addEventListener('click', function(e){
-    e.stopPropagation();
-    const collapsed = el.classList.toggle('collapsed');
-    setSectionCollapsed(section, collapsed);
-  });
+  location.replace(location.pathname);
 });
 
 /* ===================== BOOTSTRAP / LISTS ===================== */
 function boot(){
+  // שלד טעינה עד לתשובה הראשונה
+  ['Dm','Group','Space'].forEach(function(t){
+    document.getElementById('list'+t).innerHTML = '<div class="skeleton"></div><div class="skeleton"></div>';
+  });
   refreshLists();
   LIST_TIMER = setInterval(refreshLists, 8000);
 }
-
 function refreshLists(){
   callApi('getBootstrap', [ME.email]).then(function(list){
-    if(BOOT_DONE) diffForNotifications(list);
+    connOk();
     SPACES = list;
-    PREV_SPACES_MAP = {};
-    list.forEach(function(s){ PREV_SPACES_MAP[s.spaceId] = {updatedAt:s.updatedAt, unread:s.unread}; });
     renderSidebar();
-    if(CURRENT_VIEW === 'home') renderHome();
-    else if(CURRENT_VIEW === 'mentions') renderMentionsView();
-    else if(CURRENT_VIEW === 'starred') renderStarredView();
-    if(!BOOT_DONE){
-      BOOT_DONE = true;
-      handleDeepLinkOnce();
-    }
-  }).catch(handleApiError);
+    renderHome();
+    updateTitle();
+  }).catch(function(err){ connBad(); });
 }
-
-function diffForNotifications(newList){
-  if(!PREV_SPACES_MAP) return;
-  newList.forEach(function(s){
-    const prev = PREV_SPACES_MAP[s.spaceId];
-    const isNewMsg = prev ? (s.updatedAt > prev.updatedAt) : false;
-    if(isNewMsg && s.spaceId !== ACTIVE_SPACE){
-      notifyNewMessage(s);
-    } else if(isNewMsg && s.spaceId === ACTIVE_SPACE && document.hidden){
-      notifyNewMessage(s);
-    }
-  });
+function spaceMatchesView(s){
+  const st = SS.spaces[s.spaceId] || {};
+  if(st.hidden) return false;
+  const v = SS.prefs.view;
+  if(v === 'all') return true;
+  if(v === 'pinned') return !!st.pinned;
+  if(v === 'starred') return !!st.starred;
+  if(v === 'unread') return unreadOf(s) > 0;
+  return true;
 }
-
-function convSortKey(s){
-  const pinned = isConvoPinned(s.spaceId) ? 1 : 0;
-  return [pinned, s.updatedAt];
-}
-function sortConvs(list){
-  return list.slice().sort(function(a,b){
-    const ka = convSortKey(a), kb = convSortKey(b);
-    if(ka[0] !== kb[0]) return kb[0]-ka[0];
-    return kb[1]-ka[1];
-  });
-}
-
 function renderSidebar(){
   ['dm','group','space'].forEach(function(type){
     const el = document.getElementById('list' + type.charAt(0).toUpperCase() + type.slice(1));
-    const items = sortConvs(SPACES.filter(function(s){ return s.type === type; }));
+    const items = SPACES.filter(function(s){ return s.type === type && spaceMatchesView(s); });
     if(items.length === 0){
-      el.innerHTML = '<div class="empty-hint">עדיין אין כאן כלום. אפשר להתחיל עם +</div>';
-      return;
+      el.innerHTML = '<div class="empty-hint">' +
+        (SS.prefs.view === 'all' ? 'עדיין אין כאן כלום. אפשר להתחיל עם +' : 'אין שיחות בסינון הזה') + '</div>';
+    } else {
+      el.innerHTML = items.map(convItemHtml).join('');
     }
-    el.innerHTML = items.map(convItemHtml).join('');
   });
-  wireConvItems(document.getElementById('listDm'));
-  wireConvItems(document.getElementById('listGroup'));
-  wireConvItems(document.getElementById('listSpace'));
+  updateTitle();
 }
-
-function convFlagsHtml(s){
-  let h = '';
-  if(isConvoPinned(s.spaceId)) h += '<span class="conv-flag pin" title="מוצמד">' + svgIcon('pin') + '</span>';
-  if(isConvoStarred(s.spaceId)) h += '<span class="conv-flag star" title="מסומן בכוכב">' + svgIcon('star') + '</span>';
-  if(isConvoMuted(s.spaceId)) h += '<span class="conv-flag mute" title="מושתק">' + svgIcon('mute') + '</span>';
-  return h;
-}
-
 function convItemHtml(s){
-  const unread = s.unread > 0;
-  const preview = s.lastMessage ? (isImageMessage(s.lastMessage.text) ? '📷 תמונה' : escapeHtml(truncate(s.lastMessage.text,60))) : 'אין הודעות עדיין';
+  const st = SS.spaces[s.spaceId] || {};
+  const unread = unreadOf(s) > 0;
+  const preview = s.lastMessage ? escapeHtml(previewOf(s.lastMessage.text)) : 'אין הודעות עדיין';
   return '<div class="conv-item '+(s.spaceId===ACTIVE_SPACE?'active ':'')+(unread?'unread':'')+'" data-id="'+s.spaceId+'">' +
+    (st.pinned ? '<span class="pin-flag" title="מוצמד">📌</span>' : '') +
     '<div class="conv-avatar" style="background:'+colorFor(s.name||'?')+'">'+avatarNode(s.name, s.icon)+'</div>' +
     '<div class="conv-meta">' +
-      '<div class="conv-top-row"><span class="conv-name-row">'+convFlagsHtml(s)+'<span class="conv-name">'+escapeHtml(s.name||'ללא שם')+'</span></span><span class="conv-time">'+timeLabel(s.updatedAt)+'</span></div>' +
-      '<div class="conv-top-row"><span class="conv-preview">'+preview+'</span>' + (unread?'<span class="unread-dot">'+s.unread+'</span>':'') + '</div>' +
+      '<div class="conv-top-row"><span class="conv-name">'+escapeHtml(s.name||'ללא שם')+'</span><span class="conv-time">'+timeLabel(s.updatedAt)+'</span></div>' +
+      '<div class="conv-top-row"><span class="conv-preview">'+preview+'</span>' + (unread?'<span class="unread-dot">'+unreadOf(s)+'</span>':'') + '</div>' +
     '</div>' +
-    '<button class="conv-kebab popover-trigger" data-id="'+s.spaceId+'" title="עוד">' +
-      '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><circle cx="12" cy="6" r="1.3"/><circle cx="12" cy="12" r="1.3"/><circle cx="12" cy="18" r="1.3"/></svg>' +
-    '</button>' +
+    '<button class="conv-kebab" title="אפשרויות"><svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="1.8"/><circle cx="12" cy="12" r="1.8"/><circle cx="12" cy="19" r="1.8"/></svg></button>' +
   '</div>';
 }
-
-function wireConvItems(container){
-  container.querySelectorAll('.conv-item').forEach(function(node){
-    node.addEventListener('click', function(e){
-      if(e.target.closest('.conv-kebab')) return;
-      openSpace(node.dataset.id);
-    });
-  });
-  container.querySelectorAll('.conv-kebab').forEach(function(btn){
-    btn.addEventListener('click', function(e){
-      e.stopPropagation();
-      openConvKebabMenu(btn, btn.dataset.id);
-    });
-  });
-}
-
-function openConvKebabMenu(anchor, spaceId){
-  const s = SPACES.find(function(x){ return x.spaceId === spaceId; });
-  if(!s) return;
-  const pinned = isConvoPinned(spaceId);
-  const starred = isConvoStarred(spaceId);
-  const muted = isConvoMuted(spaceId);
-  openPopover(anchor, [
-    { label: pinned ? 'ביטול הצמדה' : 'הצמדה למעלה', icon:svgIcon('pin'), onClick:function(){ toggleConvoPin(spaceId); renderSidebar(); if(CURRENT_VIEW==='home') renderHome(); } },
-    { label: starred ? 'הסרה מהכוכבים' : 'סימון בכוכב', icon:svgIcon('star'), onClick:function(){ toggleStarConvo(spaceId); renderSidebar(); if(CURRENT_VIEW==='home') renderHome(); if(CURRENT_VIEW==='starred') renderStarredView(); } },
-    { label: muted ? 'ביטול השתקה' : 'השתקת התראות', icon:svgIcon('mute'), onClick:function(){ toggleConvoMute(spaceId); renderSidebar(); } },
-    { sep:true },
-    { label:'סימון כנקרא', icon:svgIcon('check'), onClick:function(){ callApi('markRead',[spaceId, ME.email]).then(function(){ refreshLists(); }).catch(handleApiError); } },
-    { label:'העתקת קישור לשיחה', icon:svgIcon('copy'), onClick:function(){ copyConvLink(spaceId); } }
-  ], {title: truncate(s.name||'שיחה', 26)});
-}
-
-function copyConvLink(spaceId){
-  const url = location.origin + location.pathname + '?space=' + encodeURIComponent(spaceId);
-  navigator.clipboard.writeText(url).then(function(){
-    showToast('הקישור לשיחה הועתק');
-  }).catch(function(){ showToast('לא הצלחתי להעתיק אוטומטית — הקישור: ' + url, {duration:8000}); });
-}
-
-/* ===================== HOME / MENTIONS / STARRED VIEWS ===================== */
-function setActiveNav(id){
-  document.querySelectorAll('.nav-home,.nav-item').forEach(function(n){ n.classList.remove('active'); });
-  const el = document.getElementById(id);
-  if(el) el.classList.add('active');
-}
-
-function showHomeContainer(){
-  document.getElementById('navHome').classList.toggle('active', CURRENT_VIEW === 'home');
-  clearInterval(POLL_TIMER);
-  document.getElementById('homeView').style.display = 'block';
-  document.getElementById('chatHeader').style.display = 'none';
-  document.getElementById('searchBar').classList.remove('open');
-  document.getElementById('pinnedPanel').classList.remove('open');
-  document.getElementById('messagesEl').style.display = 'none';
-  document.getElementById('composer').style.display = 'none';
-  document.getElementById('replyPreview').classList.remove('open');
-  document.getElementById('app').classList.remove('chat-open');
-  ACTIVE_SPACE = null;
-}
-
-function renderHome(){
-  CURRENT_VIEW = 'home';
-  showHomeContainer();
-  setActiveNav('navHome');
-  document.getElementById('homeTitle').innerHTML = 'שלום, <span id="greetName">'+escapeHtml(ME.name.split(' ')[0])+'</span>';
-  document.getElementById('homeSubtitle').textContent = 'הנה כל השיחות שלך, מהעדכנית ביותר';
-  const list = sortConvs(SPACES);
-  renderHomeList(list, 'עדיין שקט כאן', 'אפשר להתחיל צ׳אט אישי, קבוצה או מרחב חדש מהתפריט בצד.');
+document.querySelector('aside.sidebar').addEventListener('click', function(e){
+  const kebab = e.target.closest('.conv-kebab');
+  if(kebab){
+    e.stopPropagation();
+    const item = kebab.closest('.conv-item');
+    openConvMenu(item.dataset.id, kebab);
+    return;
+  }
+  const item = e.target.closest('.conv-item');
+  if(item) openSpace(item.dataset.id);
+});
+document.getElementById('chipsRow').addEventListener('click', function(e){
+  const b = e.target.closest('.chip-btn');
+  if(!b) return;
+  SS.prefs.view = b.dataset.view;
+  lsSave();
+  document.querySelectorAll('#chipsRow .chip-btn').forEach(function(x){ x.classList.toggle('active', x === b); });
   renderSidebar();
-}
-
-function renderMentionsView(){
-  CURRENT_VIEW = 'mentions';
-  showHomeContainer();
-  setActiveNav('navMentions');
-  document.getElementById('homeTitle').textContent = 'תיוגים';
-  document.getElementById('homeSubtitle').textContent = 'שיחות שבהודעה האחרונה שלהן מוזכר השם שלך (בדיקה מקומית, לא היסטוריה מלאה)';
-  const firstName = (ME.name || '').split(' ')[0].toLowerCase();
-  const list = sortConvs(SPACES).filter(function(s){
-    if(!s.lastMessage || !s.lastMessage.text) return false;
-    const t = s.lastMessage.text.toLowerCase();
-    return t.indexOf('@'+firstName) !== -1 || t.indexOf('@'+ME.name.toLowerCase()) !== -1;
+});
+document.querySelectorAll('.section-head').forEach(function(head){
+  head.addEventListener('click', function(e){
+    if(e.target.closest('.new-btn')) return;
+    const type = head.dataset.collapse;
+    const sec = head.closest('.section');
+    sec.classList.toggle('collapsed');
+    SS.prefs.collapsed[type] = sec.classList.contains('collapsed');
+    lsSave();
   });
-  renderHomeList(list, 'אין תיוגים כרגע', 'כשמישהו יכתוב "@'+escapeHtml(ME.name.split(' ')[0])+'" בהודעה האחרונה של שיחה, היא תופיע כאן.');
+  const type = head.dataset.collapse;
+  if(SS.prefs.collapsed[type]) head.closest('.section').classList.add('collapsed');
+});
+
+/* ---- תפריט שיחה בסיידבר (⋮) ---- */
+function openConvMenu(sid, anchor){
+  const s = SPACES.find(function(x){ return x.spaceId === sid; });
+  if(!s) return;
+  const st = sState(sid);
+  openMenu(anchor, [
+    { label:'פתיחה בחלון קופץ', icon:ICONS.popout, fn:function(){ popoutSpace(sid); } },
+    { label:'פתיחת השיחה', icon:ICONS.chat, fn:function(){ openSpace(sid); } },
+    { sep:true },
+    { label: st.pinned ? 'ביטול הצמדה' : 'הצמדת שיחה', icon:ICONS.pin, fn:function(){ togglePin(sid); } },
+    { label: st.starred ? 'הסרת כוכב' : 'סימון בכוכב', icon:ICONS.star, fn:function(){ toggleStar(sid); } },
+    { label: unreadOf(s) > 0 && !st.markedUnread ? 'סימון כלא נקרא' : 'סימון כנקרא', icon:ICONS.markUnread, fn:function(){ toggleMarkUnread(sid); } },
+    { label:'השתקת התראות', icon:ICONS.mute, switchOn:!!st.muted, fn:function(){ toggleMute(sid); } },
+    { label:'הסתרה מהרשימה', icon:ICONS.hide, fn:function(){ hideSpace(sid); } },
+    { sep:true },
+    { label:'העתקת קישור לשיחה', icon:ICONS.link, fn:function(){ copySpaceLink(sid); } }
+  ]);
+}
+function togglePin(sid){ sState(sid).pinned = !sState(sid).pinned; lsSave(); renderSidebar(); renderHome(); }
+function toggleStar(sid){ sState(sid).starred = !sState(sid).starred; lsSave(); renderSidebar(); renderHome(); }
+function toggleMute(sid){ sState(sid).muted = !sState(sid).muted; lsSave(); renderSidebar(); updateTitle(); toast(sState(sid).muted ? 'השיחה הושתקה' : 'ההשתקה בוטלה'); }
+function toggleMarkUnread(sid){
+  const st = sState(sid);
+  st.markedUnread = !st.markedUnread;
+  lsSave(); renderSidebar(); renderHome();
+}
+function hideSpace(sid){
+  sState(sid).hidden = true; lsSave();
+  if(ACTIVE_SPACE === sid) goHome();
+  renderSidebar(); renderHome(); updateTitle();
+  toast('השיחה הוסתרה מהרשימה', { action:{ label:'ביטול', fn:function(){ sState(sid).hidden = false; lsSave(); renderSidebar(); renderHome(); updateTitle(); } } });
+}
+function copySpaceLink(sid){
+  const url = location.origin + location.pathname + '#space=' + sid;
+  if(navigator.clipboard) navigator.clipboard.writeText(url).then(function(){ toast('הקישור הועתק'); }, function(){ fallbackCopy(url); });
+  else fallbackCopy(url);
+}
+function fallbackCopy(text){
+  const ta = document.createElement('textarea');
+  ta.value = text; document.body.appendChild(ta); ta.select();
+  try { document.execCommand('copy'); toast('הקישור הועתק'); } catch(e){ toast('העתקה נכשלה'); }
+  ta.remove();
+}
+function popoutSpace(sid){
+  window.open(location.pathname + '?pop=1#space=' + sid, 'gcPopout', 'width=500,height=740');
 }
 
-function renderStarredView(){
-  CURRENT_VIEW = 'starred';
-  showHomeContainer();
-  setActiveNav('navStarred');
-  document.getElementById('homeTitle').textContent = 'מסומן בכוכב';
-  document.getElementById('homeSubtitle').textContent = 'רשימה זו נשמרת במכשיר הזה בלבד';
-  const starred = starredConvos();
-  const list = sortConvs(SPACES.filter(function(s){ return starred.indexOf(s.spaceId) !== -1; }));
-  renderHomeList(list, 'אין עדיין שיחות מסומנות', 'אפשר לסמן שיחה בכוכב דרך תפריט "עוד" (⋮) לצד השיחה.');
-}
-
-function renderHomeList(list, emptyTitle, emptyText){
+/* ===================== HOME ===================== */
+function renderHome(){
+  if(ACTIVE_SPACE) return;
+  const hview = SS.prefs.hview;
+  let list = SPACES.slice().sort(function(a,b){ return b.updatedAt - a.updatedAt; }).filter(spaceMatchesView);
+  if(hview === 'unread') list = list.filter(function(s){ return unreadOf(s) > 0; });
+  if(hview === 'mentions') list = list.filter(looksMentioned);
   const el = document.getElementById('homeList');
+  document.querySelectorAll('.home-chips .chip-btn').forEach(function(x){ x.classList.toggle('active', x.dataset.hview === hview); });
   if(list.length === 0){
     el.innerHTML = '<div class="empty-state" style="padding:40px 0;">' +
       '<svg width="52" height="52" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 5h16a1 1 0 011 1v9a1 1 0 01-1 1H9l-5 4v-4H4a1 1 0 01-1-1V6a1 1 0 011-1z"/></svg>' +
-      '<h3>'+escapeHtml(emptyTitle)+'</h3><p>'+escapeHtml(emptyText)+'</p>' +
+      '<h3>'+(hview === 'all' ? 'עדיין שקט כאן' : 'אין תוצאות בסינון הזה')+'</h3><p>אפשר להתחיל צ׳אט אישי, קבוצה או מרחב חדש מהתפריט בצד.</p>' +
     '</div>';
     return;
   }
   el.innerHTML = list.map(convItemHtml).join('');
-  wireConvItems(el);
 }
-
-document.getElementById('navHome').addEventListener('click', renderHome);
-document.getElementById('navMentions').addEventListener('click', renderMentionsView);
-document.getElementById('navStarred').addEventListener('click', renderStarredView);
-document.getElementById('backBtn').addEventListener('click', renderHome);
-
-/* ===================== DEEP LINKS (?space=ID + #msg-ID) ===================== */
-function handleDeepLinkOnce(){
-  const params = new URLSearchParams(location.search);
-  const spaceId = params.get('space');
-  if(spaceId && SPACES.some(function(s){ return s.spaceId === spaceId; })){
-    openSpace(spaceId);
-  }
+function looksMentioned(s){
+  if(!s.lastMessage) return false;
+  const t = (s.lastMessage.text || '').toLowerCase();
+  const first = ME.name.split(' ')[0];
+  const emailPart = ME.email.split('@')[0].toLowerCase();
+  if(s.lastMessage.senderEmail && s.lastMessage.senderEmail.toLowerCase() === ME.email.toLowerCase()) return false;
+  return t.indexOf('@'+emailPart) !== -1 || t.indexOf(first) !== -1;
 }
+document.querySelector('.home-chips').addEventListener('click', function(e){
+  const b = e.target.closest('.chip-btn');
+  if(!b) return;
+  SS.prefs.hview = b.dataset.hview;
+  lsSave();
+  renderHome();
+});
+
+/* ===================== NAV / HASH ===================== */
+function goHome(){
+  ACTIVE_SPACE = null;
+  clearInterval(POLL_TIMER);
+  document.getElementById('navHome').classList.add('active');
+  document.getElementById('homeView').style.display = 'block';
+  document.getElementById('chatHeader').style.display = 'none';
+  document.getElementById('messagesEl').style.display = 'none';
+  document.getElementById('composer').style.display = 'none';
+  closePanel();
+  document.getElementById('app').classList.remove('chat-open');
+  history.replaceState(null, '', location.pathname + location.search);
+  renderHome();
+  renderSidebar();
+  updateTitle();
+}
+document.getElementById('navHome').addEventListener('click', goHome);
+document.getElementById('backBtn').addEventListener('click', goHome);
+document.getElementById('popClose').addEventListener('click', function(){ window.close(); });
 
 /* ===================== CHAT VIEW ===================== */
 function openSpace(spaceId){
-  ACTIVE_SPACE = spaceId;
-  CURRENT_VIEW = 'chat';
   const s = SPACES.find(function(x){ return x.spaceId === spaceId; });
   if(!s) return;
+  ACTIVE_SPACE = spaceId;
+  const st = sState(spaceId);
+  st.markedUnread = false; lsSave();
 
-  document.querySelectorAll('.nav-home,.nav-item').forEach(function(n){ n.classList.remove('active'); });
+  history.replaceState(null, '', '#space=' + spaceId);
+  document.getElementById('navHome').classList.remove('active');
   document.getElementById('homeView').style.display = 'none';
   document.getElementById('chatHeader').style.display = 'flex';
   document.getElementById('messagesEl').style.display = 'flex';
   document.getElementById('composer').style.display = 'flex';
   document.getElementById('app').classList.add('chat-open');
-  document.getElementById('searchBar').classList.remove('open');
-  closeChatSearch(true);
-  cancelReply();
+  closePanel();
 
   document.getElementById('chatAvatar').style.background = colorFor(s.name||'?');
   document.getElementById('chatAvatar').innerHTML = avatarNode(s.name, s.icon);
   document.getElementById('chatTitle').textContent = s.name || 'ללא שם';
   document.getElementById('chatSubtitle').textContent = s.type === 'dm' ? 'צ׳אט אישי' : (s.memberCount + ' חברים · ' + TYPE_LABEL[s.type]);
 
-  document.getElementById('messagesEl').classList.toggle('compact', densityMode() === 'compact');
-  document.getElementById('densityBtn').classList.toggle('is-active', densityMode() === 'compact');
-  document.getElementById('pinnedBtn').classList.toggle('is-active', pinnedMessagesFor(spaceId).length > 0);
-
   resetMessagesView();
   document.getElementById('messagesEl').innerHTML = '<div class="empty-msgs">טוען הודעות...</div>';
-  renderPinnedPanel();
-
   renderSidebar();
-
-  const hashMsgId = location.hash.indexOf('#msg-') === 0 ? location.hash.slice(5) : null;
+  updateTitle();
 
   callApi('getMessages', [spaceId, ME.email]).then(function(msgs){
-    if(ACTIVE_SPACE !== spaceId) return; // המשתמש עבר לשיחה אחרת בזמן שהבקשה הייתה בדרך
+    if(ACTIVE_SPACE !== spaceId) return;
     resetMessagesView();
     MESSAGES = msgs;
     LAST_TS = msgs.length ? msgs[msgs.length-1].timestamp : Date.now();
@@ -1480,8 +1135,8 @@ function openSpace(spaceId){
     } else {
       appendMessagesToDom(msgs, true);
     }
+    callApi('markRead', [spaceId, ME.email]).catch(function(){});
     refreshLists();
-    if(hashMsgId) setTimeout(function(){ scrollToMessage(hashMsgId); }, 60);
   }).catch(handleApiError);
 
   clearInterval(POLL_TIMER);
@@ -1492,61 +1147,89 @@ function pollNewMessages(){
   if(!ACTIVE_SPACE) return;
   const spaceAtRequest = ACTIVE_SPACE;
   callApi('pollMessages', [spaceAtRequest, LAST_TS]).then(function(msgs){
+    connOk();
     if(ACTIVE_SPACE !== spaceAtRequest || !msgs.length) return;
-    // רק הודעות שעדיין לא הוצגו — מגן מפני כפילויות גם אם יש חפיפה בין בקשות
-    const fresh = msgs.filter(function(m){ return !RENDERED_IDS.has(m.messageId); });
     LAST_TS = Math.max(LAST_TS, msgs[msgs.length-1].timestamp);
+    const fresh = [];
+    msgs.forEach(function(m){
+      if(RENDERED_IDS.has(m.messageId)) return;
+      // פתרון התנגשות: ההודעה ששלחנו חזרה מהשרת לפני שההודעה האופטימית הוחלפה
+      if(m.senderEmail && m.senderEmail.toLowerCase() === ME.email.toLowerCase()){
+        const p = MESSAGES.find(function(x){ return x.pending && x.text === m.text && Math.abs(x.timestamp - m.timestamp) < 120000; });
+        if(p){ replaceOptimisticMessage(p.messageId, m); return; }
+      }
+      if(!fresh.find(function(f){ return f.messageId === m.messageId; })) fresh.push(m);
+    });
     if(!fresh.length) return;
     MESSAGES = MESSAGES.concat(fresh);
     appendMessagesToDom(fresh);
-    callApi('markRead', [spaceAtRequest, ME.email]).catch(handleApiError);
+    callApi('markRead', [spaceAtRequest, ME.email]).catch(function(){});
+    const s = SPACES.find(function(x){ return x.spaceId === spaceAtRequest; });
+    maybeNotify(s, fresh[fresh.length-1]);
     refreshLists();
-  }).catch(handleApiError);
+  }).catch(function(){ connBad(); });
 }
 
-/* ---- רינדור: מוסיפים רק הודעות חדשות ל-DOM, לעולם לא בונים הכל מחדש,
-   כדי שלא יהיו קפיצות בגלילה ושהודעה לעולם לא תופיע פעמיים ---- */
 function resetMessagesView(){
   RENDERED_IDS = new Set();
   GROUP_KEY = null;
   GROUP_TS = 0;
   document.getElementById('messagesEl').innerHTML = '';
 }
-
 function appendMessagesToDom(list, forceScroll){
   if(!list.length) return;
   const el = document.getElementById('messagesEl');
   const wasNearBottom = forceScroll || (el.scrollHeight - el.scrollTop - el.clientHeight < 80);
-
   let html = '';
   list.forEach(function(m){
-    if(RENDERED_IDS.has(m.messageId)) return; // הגנה כפולה מפני כפילויות
+    if(RENDERED_IDS.has(m.messageId)) return;
     RENDERED_IDS.add(m.messageId);
     html += messageRowHtml(m);
   });
   if(!html) return;
-
   const empty = el.querySelector('.empty-msgs');
   if(empty) empty.remove();
-
   el.insertAdjacentHTML('beforeend', html);
-  wireNewMessageRows(list);
   if(wasNearBottom) el.scrollTop = el.scrollHeight;
+}
+
+const REACT_EMOJIS = ['👍','❤️','😂','😮','😢','🎉'];
+function myReactions(mid){
+  const r = SS.reactions[mid];
+  return r ? Object.keys(r).filter(function(e){ return r[e]; }) : [];
+}
+function toggleReaction(mid, emoji){
+  if(!SS.reactions[mid]) SS.reactions[mid] = {};
+  SS.reactions[mid][emoji] = !SS.reactions[mid][emoji];
+  lsSave();
+  const row = document.querySelector('.msg-row[data-id="'+mid+'"]');
+  if(row) refreshReactionRow(row, mid);
+}
+function refreshReactionRow(row, mid){
+  let el = row.querySelector('.react-row');
+  const mine = myReactions(mid);
+  if(!mine.length){ if(el) el.remove(); return; }
+  if(!el){
+    el = document.createElement('div');
+    const own = row.classList.contains('own');
+    el.className = 'react-row' + (own ? ' own' : '');
+    row.appendChild(el);
+  }
+  el.innerHTML = mine.map(function(e){ return '<button class="react-chip mine" data-react="'+e+'" title="תגובה (מקומי)">'+e+'</button>'; }).join('');
 }
 
 function messageRowHtml(m){
   let html = '';
   const day = dayLabel(m.timestamp);
   const own = m.senderEmail.toLowerCase() === ME.email.toLowerCase();
-  const s = SPACES.find(function(x){return x.spaceId===ACTIVE_SPACE;});
+  const s = SPACES.find(function(x){ return x.spaceId === ACTIVE_SPACE; });
   const showName = !own && s && s.type !== 'dm';
 
-  // קבוצה חדשה (כותרת עם שם/זמן) כשמחליף שולח, עובר יום, או שעברו יותר מ-5 דקות מההודעה הקודמת בקבוצה
   const key = day + '|' + (own ? 'me' : m.senderEmail);
   const isNewGroup = key !== GROUP_KEY || (m.timestamp - GROUP_TS) > 5 * 60000;
   if(isNewGroup){
     if(key.split('|')[0] !== (GROUP_KEY ? GROUP_KEY.split('|')[0] : null)){
-      html += '<div class="day-sep">'+day+'</div>';
+      html += '<div class="day-sep" data-day="'+escapeHtml(day)+'">'+day+'</div>';
     }
     const nameHtml = showName ? '<span class="g-name">'+escapeHtml(m.senderName)+'</span>' : '';
     html += '<div class="msg-group-head '+(own?'own':'other')+'">'+nameHtml+'<span>'+relativeTimeLabel(m.timestamp)+'</span></div>';
@@ -1554,238 +1237,105 @@ function messageRowHtml(m){
   GROUP_KEY = key;
   GROUP_TS = m.timestamp;
 
-  const pinned = isMessagePinned(ACTIVE_SPACE, m.messageId);
-  const starred = isMessageStarred(ACTIVE_SPACE, m.messageId);
-
-  html += '<div class="msg-row-wrap '+(own?'own':'other')+'" data-id="'+m.messageId+'" title="'+fullTimeLabel(m.timestamp)+'">';
-  html += messageToolbarHtml(own);
-  html += '<div class="msg-row '+(own?'own':'other')+(m.pending?' pending':'')+'">';
+  html += '<div class="msg-row '+(own?'own':'other')+(m.pending?' pending':'')+'" data-id="'+m.messageId+'">';
   if(!own){
     html += '<div class="msg-avatar '+(isNewGroup?'':'spacer')+'" style="background:'+colorFor(m.senderName||'?')+'">' + (isNewGroup ? avatarNode(m.senderName, m.senderPicture) : '') + '</div>';
   }
-  html += '<div class="msg-bubble">'+formatMessageBody(m.text)+ (pinned?' <span title="מוצמד" style="opacity:.55;">'+svgIcon('pin')+'</span>':'') + (starred?' <span title="מסומן בכוכב" style="opacity:.55;color:var(--star);">'+svgIcon('star')+'</span>':'') +'</div>';
-  html += '</div>';
-  html += reactionsHtml(m.messageId);
+  html += '<div class="msg-bubble" title="'+new Date(m.timestamp).toLocaleString('he-IL')+'">'+renderContent(m)+'</div>';
+  if(!m.pending){
+    html += '<div class="msg-actions">' +
+      '<button data-act="react" title="הוספת תגובה">😊</button>' +
+      '<button data-act="pin" title="הצמדת הודעה">📌</button>' +
+      '<button data-act="copy" title="העתקת טקסט"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15V5a2 2 0 012-2h10"/></svg></button>' +
+    '</div>';
+  }
   html += '</div>';
   return html;
 }
-
-function messageToolbarHtml(own){
-  let h = '<div class="msg-toolbar">';
-  QUICK_REACTIONS.slice(0,4).forEach(function(e){ h += '<button class="react-quick" data-e="'+escapeHtml(e)+'" title="ריאקציה">'+e+'</button>'; });
-  h += '<button class="reply-trigger" title="תגובה עם ציטוט">'+svgIcon('forward').replace('forward','reply')+'</button>';
-  h += '<button class="more-trigger popover-trigger" title="עוד">' +
-    '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><circle cx="12" cy="6" r="1.3"/><circle cx="12" cy="12" r="1.3"/><circle cx="12" cy="18" r="1.3"/></svg>' +
-  '</button>';
-  h += '</div>';
-  return h;
-}
-function reactionsHtml(messageId){
-  const map = reactionsFor(messageId);
-  const active = Object.keys(map).filter(function(k){ return map[k]; });
-  if(!active.length) return '';
-  return '<div class="msg-reactions">' + active.map(function(e){
-    return '<button class="reaction-pill mine" data-e="'+escapeHtml(e)+'" data-mid="'+messageId+'" title="לחיצה להסרה">'+e+' 1</button>';
-  }).join('') + '</div>';
-}
-
-function wireNewMessageRows(list){
-  list.forEach(function(m){
-    const wrap = document.querySelector('.msg-row-wrap[data-id="'+m.messageId+'"]');
-    if(!wrap || wrap.dataset.wired) return;
-    wrap.dataset.wired = '1';
-    wrap.querySelectorAll('.react-quick').forEach(function(btn){
-      btn.addEventListener('click', function(e){
-        e.stopPropagation();
-        toggleReaction(m.messageId, btn.dataset.e);
-        refreshReactionsFor(m.messageId);
-      });
-    });
-    const replyBtn = wrap.querySelector('.reply-trigger');
-    if(replyBtn) replyBtn.addEventListener('click', function(e){ e.stopPropagation(); startReply(m); });
-    const moreBtn = wrap.querySelector('.more-trigger');
-    if(moreBtn) moreBtn.addEventListener('click', function(e){ e.stopPropagation(); openMessageMoreMenu(moreBtn, m); });
-    wrap.querySelectorAll('.reaction-pill').forEach(function(pill){
-      pill.addEventListener('click', function(e){
-        e.stopPropagation();
-        toggleReaction(m.messageId, pill.dataset.e);
-        refreshReactionsFor(m.messageId);
-      });
-    });
-  });
-}
-
-function refreshReactionsFor(messageId){
-  const wrap = document.querySelector('.msg-row-wrap[data-id="'+messageId+'"]');
-  if(!wrap) return;
-  const existing = wrap.querySelector('.msg-reactions');
-  if(existing) existing.remove();
-  wrap.insertAdjacentHTML('beforeend', reactionsHtml(messageId));
-  const m = MESSAGES.find(function(x){ return x.messageId === messageId; });
-  if(m) wireNewMessageRows([m].map(function(x){ return Object.assign({}, x); }));
-  // rewire only the freshly-added reaction pills (avoid double-binding others)
-  wrap.querySelectorAll('.reaction-pill').forEach(function(pill){
-    if(pill.dataset.wired) return;
-    pill.dataset.wired = '1';
-    pill.addEventListener('click', function(e){
-      e.stopPropagation();
-      toggleReaction(messageId, pill.dataset.e);
-      refreshReactionsFor(messageId);
-    });
-  });
-}
-
-function openMessageMoreMenu(anchor, m){
-  const pinned = isMessagePinned(ACTIVE_SPACE, m.messageId);
-  const starred = isMessageStarred(ACTIVE_SPACE, m.messageId);
-  openPopover(anchor, [
-    { label:'העברה לשיחה אחרת', icon:svgIcon('forward'), onClick:function(){ openForwardModal(m); } },
-    { label: starred ? 'הסרת כוכב' : 'סימון בכוכב', icon:svgIcon('star'), onClick:function(){ toggleMessageStar(ACTIVE_SPACE, m.messageId); rerenderSingleMessageFlags(m); } },
-    { label: pinned ? 'ביטול הצמדה' : 'הצמדת הודעה', icon:svgIcon('pin'), onClick:function(){ toggleMessagePin(ACTIVE_SPACE, m.messageId, m.senderName, m.text); rerenderSingleMessageFlags(m); renderPinnedPanel(); } },
-    { sep:true },
-    { label:'העתקת הטקסט', icon:svgIcon('copy'), onClick:function(){ copyMessageText(m); } },
-    { label:'העתקת קישור להודעה', icon:svgIcon('copy'), onClick:function(){ copyMessageLink(m); } },
-    { label:'פרטי הודעה (זמן מדויק)', icon:svgIcon('info'), onClick:function(){ showToast(fullTimeLabel(m.timestamp)); } }
-  ]);
-}
-
-function rerenderSingleMessageFlags(m){
-  const wrap = document.querySelector('.msg-row-wrap[data-id="'+m.messageId+'"]');
-  if(!wrap) return;
-  const bubble = wrap.querySelector('.msg-bubble');
-  if(!bubble) return;
-  const pinned = isMessagePinned(ACTIVE_SPACE, m.messageId);
-  const starred = isMessageStarred(ACTIVE_SPACE, m.messageId);
-  bubble.innerHTML = formatMessageBody(m.text) + (pinned?' <span title="מוצמד" style="opacity:.55;">'+svgIcon('pin')+'</span>':'') + (starred?' <span title="מסומן בכוכב" style="opacity:.55;color:var(--star);">'+svgIcon('star')+'</span>':'');
-  document.getElementById('pinnedBtn').classList.toggle('is-active', pinnedMessagesFor(ACTIVE_SPACE).length > 0);
-}
-
-function copyMessageText(m){
-  navigator.clipboard.writeText(isImageMessage(m.text) ? '(תמונה)' : m.text).then(function(){
-    showToast('הטקסט הועתק');
-  }).catch(function(){ showToast('לא ניתן להעתיק בדפדפן הזה', {error:true}); });
-}
-function copyMessageLink(m){
-  const url = location.origin + location.pathname + '?space=' + encodeURIComponent(ACTIVE_SPACE) + '#msg-' + encodeURIComponent(m.messageId);
-  navigator.clipboard.writeText(url).then(function(){
-    showToast('קישור להודעה הועתק');
-  }).catch(function(){ showToast('הקישור: ' + url, {duration:8000}); });
-}
-function scrollToMessage(messageId){
-  const wrap = document.querySelector('.msg-row-wrap[data-id="'+messageId+'"]');
-  if(!wrap){ showToast('ההודעה לא נמצאה (יתכן שנמחקה)'); return; }
-  wrap.scrollIntoView({behavior:'smooth', block:'center'});
-  wrap.classList.add('flash');
-  setTimeout(function(){ wrap.classList.remove('flash'); }, 1700);
-}
-
-/* ---- Reply (quote) ---- */
-function startReply(m){
-  REPLY_TO = { senderName: m.senderEmail.toLowerCase() === ME.email.toLowerCase() ? 'את/ה' : m.senderName, text: isImageMessage(m.text) ? '📷 תמונה' : m.text };
-  document.getElementById('replyName').textContent = REPLY_TO.senderName;
-  document.getElementById('replyText').textContent = truncate(REPLY_TO.text, 80);
-  document.getElementById('replyPreview').classList.add('open');
-  document.getElementById('msgInput').focus();
-}
-function cancelReply(){
-  REPLY_TO = null;
-  document.getElementById('replyPreview').classList.remove('open');
-}
-document.getElementById('replyCancelBtn').addEventListener('click', cancelReply);
-
-/* ---- Forward ---- */
-let FORWARD_SOURCE_MSG = null;
-function openForwardModal(m){
-  FORWARD_SOURCE_MSG = m;
-  const el = document.getElementById('forwardList');
-  const list = sortConvs(SPACES.filter(function(s){ return s.spaceId !== ACTIVE_SPACE; }));
-  if(!list.length){
-    el.innerHTML = '<div class="pv-empty">אין שיחות אחרות להעברה</div>';
-  } else {
-    el.innerHTML = list.map(function(s){
-      return '<div class="user-result fwd-target" data-id="'+s.spaceId+'">' +
-        '<div class="conv-avatar" style="background:'+colorFor(s.name||'?')+'">'+avatarNode(s.name, s.icon)+'</div>' +
-        '<div><div class="nm">'+escapeHtml(s.name||'ללא שם')+'</div><div class="em">'+TYPE_LABEL[s.type]+'</div></div>' +
-      '</div>';
-    }).join('');
-    el.querySelectorAll('.fwd-target').forEach(function(node){
-      node.addEventListener('click', function(){ doForward(node.dataset.id); });
-    });
+function renderContent(m){
+  const t = m.text || '';
+  if(t.indexOf('[img:') === 0 && t.lastIndexOf(']') > 5){
+    const data = t.slice(5, t.lastIndexOf(']'));
+    if(/^data:image\/(png|jpe?g|gif|webp);base64,/.test(data)){
+      return '<img class="msg-img" alt="תמונה" src="'+data+'">';
+    }
   }
-  document.getElementById('forwardOverlay').classList.add('open');
-}
-function closeForwardModal(){ document.getElementById('forwardOverlay').classList.remove('open'); FORWARD_SOURCE_MSG = null; }
-document.getElementById('forwardClose').addEventListener('click', closeForwardModal);
-document.getElementById('forwardCancelBtn').addEventListener('click', closeForwardModal);
-function doForward(targetSpaceId){
-  if(!FORWARD_SOURCE_MSG) return;
-  const m = FORWARD_SOURCE_MSG;
-  const text = isImageMessage(m.text) ? m.text : ('↪ הועבר מאת ' + m.senderName + ':\n' + m.text);
-  callApi('sendMessage', [{ spaceId:targetSpaceId, senderEmail:ME.email, senderName:ME.name, senderPicture:ME.picture, text:text }]).then(function(){
-    showToast('ההודעה הועברה בהצלחה');
-    closeForwardModal();
-    refreshLists();
-  }).catch(handleApiError);
+  if(t.indexOf('[🎙') === 0 && MEDIA[m.messageId]){
+    return '<audio controls src="'+MEDIA[m.messageId]+'" style="max-width:240px;"></audio>';
+  }
+  if(t.indexOf('[קובץ:') === 0 && t.lastIndexOf(']') > 5){
+    return '<span class="file-chip">📄 '+escapeHtml(t.slice(6, t.lastIndexOf(']')))+'</span>';
+  }
+  return mdLite(t);
 }
 
-/* ---- Pinned panel ---- */
-function renderPinnedPanel(){
-  const list = pinnedMessagesFor(ACTIVE_SPACE);
-  const el = document.getElementById('pinnedList');
-  if(!list.length){
-    el.innerHTML = '<div class="pinned-empty">אין הודעות מוצמדות בשיחה הזו. אפשר להצמיד הודעה מתפריט "עוד" שמופיע כשעוברים עכבר מעל הודעה.</div>';
-  } else {
-    el.innerHTML = list.map(function(p){
-      return '<div class="pinned-item" data-id="'+p.messageId+'">' +
-        '<div class="pi-main"><b>'+escapeHtml(p.senderName||'')+'</b><span class="pi-txt">'+escapeHtml(isImageMessage(p.text)?'📷 תמונה':truncate(p.text,70))+'</span></div>' +
-        '<button data-unpin="'+p.messageId+'" title="ביטול הצמדה">'+svgIcon('trash')+'</button>' +
-      '</div>';
-    }).join('');
-    el.querySelectorAll('.pinned-item').forEach(function(node){
-      node.addEventListener('click', function(e){
-        if(e.target.closest('button')) return;
-        scrollToMessage(node.dataset.id);
-      });
-    });
-    el.querySelectorAll('[data-unpin]').forEach(function(btn){
-      btn.addEventListener('click', function(e){
-        e.stopPropagation();
-        const id = btn.dataset.unpin;
-        const m = MESSAGES.find(function(x){ return x.messageId === id; }) || {senderName:'', text:''};
-        toggleMessagePin(ACTIVE_SPACE, id, m.senderName, m.text);
-        renderPinnedPanel();
-        if(MESSAGES.find(function(x){return x.messageId===id;})) rerenderSingleMessageFlags(MESSAGES.find(function(x){return x.messageId===id;}));
-        document.getElementById('pinnedBtn').classList.toggle('is-active', pinnedMessagesFor(ACTIVE_SPACE).length > 0);
-      });
-    });
+/* פעולות ריחוף על הודעות */
+document.getElementById('messagesEl').addEventListener('click', function(e){
+  const img = e.target.closest('.msg-img');
+  if(img){
+    openPanel('תמונה', '<img class="big-img" src="'+img.src+'">');
+    return;
   }
-}
-document.getElementById('pinnedBtn').addEventListener('click', function(){
-  document.getElementById('pinnedPanel').classList.toggle('open');
+  const actBtn = e.target.closest('.msg-actions button');
+  if(actBtn){
+    const mid = actBtn.closest('.msg-row').dataset.id;
+    const m = MESSAGES.find(function(x){ return x.messageId === mid; });
+    const act = actBtn.dataset.act;
+    if(act === 'react'){
+      openMenu(actBtn, REACT_EMOJIS.map(function(em){
+        return { emoji: em, label: (myReactions(mid).indexOf(em) !== -1 ? 'הסרת ' : 'הוספת ') + em, fn:function(){ toggleReaction(mid, em); } };
+      }));
+    } else if(act === 'pin'){
+      toggleMsgPin(mid);
+    } else if(act === 'copy'){
+      const txt = m ? m.text : '';
+      if(navigator.clipboard) navigator.clipboard.writeText(txt).then(function(){ toast('הטקסט הועתק'); }, function(){ fallbackCopy(txt); });
+      else fallbackCopy(txt);
+    }
+    return;
+  }
+  const chip = e.target.closest('.react-chip');
+  if(chip){
+    toggleReaction(chip.closest('.msg-row').dataset.id, chip.dataset.react);
+  }
 });
+function toggleMsgPin(mid){
+  const arr = SS.pinnedMsgs[ACTIVE_SPACE] || [];
+  const i = arr.indexOf(mid);
+  if(i === -1){ arr.push(mid); toast('ההודעה הוצמדה'); }
+  else { arr.splice(i, 1); toast('ההצמדה בוטלה'); }
+  SS.pinnedMsgs[ACTIVE_SPACE] = arr;
+  lsSave();
+}
 
 function replaceOptimisticMessage(tempId, saved){
   const idx = MESSAGES.findIndex(function(m){ return m.messageId === tempId; });
   if(idx !== -1) MESSAGES[idx] = saved;
   RENDERED_IDS.delete(tempId);
   RENDERED_IDS.add(saved.messageId);
-  const node = document.querySelector('.msg-row-wrap[data-id="'+tempId+'"]');
+  if(MEDIA[tempId]){ MEDIA[saved.messageId] = MEDIA[tempId]; delete MEDIA[tempId]; }
+  const node = document.querySelector('.msg-row[data-id="'+tempId+'"]');
   if(node){
     node.setAttribute('data-id', saved.messageId);
-    node.querySelector('.msg-row').classList.remove('pending');
-    node.dataset.wired = '';
-    wireNewMessageRows([saved]);
+    node.classList.remove('pending');
+    const acts = node.querySelector('.msg-actions');
+    if(!acts){
+      const d = document.createElement('div');
+      d.className = 'msg-actions';
+      d.innerHTML = '<button data-act="react" title="הוספת תגובה">😊</button><button data-act="pin" title="הצמדת הודעה">📌</button><button data-act="copy" title="העתקת טקסט">⧉</button>';
+      node.appendChild(d);
+    }
   }
 }
-
 function removeOptimisticMessage(tempId){
   const idx = MESSAGES.findIndex(function(m){ return m.messageId === tempId; });
   if(idx !== -1) MESSAGES.splice(idx, 1);
   RENDERED_IDS.delete(tempId);
-  const node = document.querySelector('.msg-row-wrap[data-id="'+tempId+'"]');
+  const node = document.querySelector('.msg-row[data-id="'+tempId+'"]');
   if(node) node.remove();
 }
 
+/* ===================== SENDING ===================== */
 const msgInput = document.getElementById('msgInput');
 const sendBtn = document.getElementById('sendBtn');
 msgInput.addEventListener('input', function(){
@@ -1796,18 +1346,16 @@ msgInput.addEventListener('input', function(){
 msgInput.addEventListener('keydown', function(e){
   if(e.key === 'Enter' && !e.shiftKey){ e.preventDefault(); sendMessage(); }
 });
-sendBtn.addEventListener('click', sendMessage);
+sendBtn.addEventListener('click', function(){ sendMessage(); });
 
-function sendMessage(){
-  let text = msgInput.value.trim();
+function sendMessage(overrideText){
+  const text = (overrideText !== undefined ? overrideText : msgInput.value).trim();
   if(!text || !ACTIVE_SPACE) return;
-  if(REPLY_TO){
-    text = '↩ בתגובה ל' + REPLY_TO.senderName + ': "' + truncate(REPLY_TO.text, 60) + '"\n' + text;
+  if(overrideText === undefined){
+    msgInput.value = '';
+    msgInput.style.height = 'auto';
   }
-  msgInput.value = '';
-  msgInput.style.height='auto';
-  sendBtn.disabled = true;
-  cancelReply();
+  sendBtn.disabled = !msgInput.value.trim();
 
   const tempId = 'temp-'+Date.now()+'-'+Math.random().toString(36).slice(2,7);
   const optimistic = { messageId:tempId, spaceId:ACTIVE_SPACE, senderEmail:ME.email, senderName:ME.name, senderPicture:ME.picture, text:text, timestamp:Date.now(), pending:true };
@@ -1832,150 +1380,490 @@ function sendMessage(){
     }
   });
 }
-function sendImageMessage(dataUrl){
+
+/* ===================== COMPOSER TOOLS ===================== */
+/* עיצוב טקסט */
+document.getElementById('fmtBtn').addEventListener('click', function(){
+  const fb = document.getElementById('formatBar');
+  fb.classList.toggle('open');
+  this.classList.toggle('on', fb.classList.contains('open'));
+});
+document.querySelectorAll('#formatBar button').forEach(function(b){
+  b.addEventListener('click', function(){
+    applyWrap(b.dataset.fmt);
+  });
+});
+function applyWrap(marker){
+  const s = msgInput.selectionStart, e = msgInput.selectionEnd;
+  const val = msgInput.value;
+  const sel = val.slice(s, e) || 'טקסט';
+  const before = val.slice(Math.max(0, s - marker.length), s);
+  const after = val.slice(e, e + marker.length);
+  if(before === marker && after === marker){
+    msgInput.setRangeText(sel, s - marker.length, e + marker.length, 'end');
+  } else {
+    msgInput.setRangeText(marker + sel + marker, s, e, 'end');
+  }
+  msgInput.focus();
+  msgInput.dispatchEvent(new Event('input'));
+}
+
+/* אימוג'י */
+const EMOJI_SETS = {
+  '😀': ['😀','😁','😂','🤣','😊','😍','😘','😎','🤔','😐','😅','🙂','😢','😭','😡','🥳','🤩','😱','🙃','😉','😴','🤗','😷','🥺','😇','😤','🙄','😂','😅','😊'],
+  '👍': ['👍','👎','👌','✌️','🤞','🙏','👏','🙌','🤝','💪','👋','🤙','☝️','👆','👇','👉','👈','✍️','🫶','🤟'],
+  '❤️': ['❤️','🔥','✨','🎉','🎯','📌','✅','❌','⏰','💡','⚠️','🚀','⭐','💯','🔔','📎','💬','📧','🗓️','☕']
+};
+let curEmojiTab = '😀';
+const emojiTabs = document.getElementById('emojiTabs');
+const emojiGrid = document.getElementById('emojiGrid');
+function renderEmojiTabs(){
+  emojiTabs.innerHTML = Object.keys(EMOJI_SETS).map(function(k){
+    return '<button class="'+(k===curEmojiTab?'active':'')+'" data-tab="'+k+'">'+k+'</button>';
+  }).join('');
+}
+function renderEmojiGrid(){
+  emojiGrid.innerHTML = EMOJI_SETS[curEmojiTab].map(function(e){
+    return '<button data-em="'+e+'">'+e+'</button>';
+  }).join('');
+}
+emojiTabs.addEventListener('click', function(e){
+  const b = e.target.closest('button');
+  if(!b) return;
+  curEmojiTab = b.dataset.tab;
+  renderEmojiTabs(); renderEmojiGrid();
+});
+emojiGrid.addEventListener('click', function(e){
+  const b = e.target.closest('button');
+  if(!b) return;
+  const s = msgInput.selectionStart, epos = msgInput.selectionEnd;
+  msgInput.setRangeText(b.dataset.em, s, epos, 'end');
+  msgInput.focus();
+  msgInput.dispatchEvent(new Event('input'));
+});
+document.getElementById('emojiBtn').addEventListener('click', function(e){
+  e.stopPropagation();
+  const pop = document.getElementById('emojiPop');
+  if(pop.classList.contains('open')){ pop.classList.remove('open'); return; }
+  renderEmojiTabs(); renderEmojiGrid();
+  const r = this.getBoundingClientRect();
+  pop.classList.add('open');
+  let x = r.left - 130;
+  x = Math.max(8, Math.min(x, window.innerWidth - pop.offsetWidth - 8));
+  let y = r.top - pop.offsetHeight - 8;
+  if(y < 8) y = r.bottom + 8;
+  pop.style.left = x + 'px'; pop.style.top = y + 'px';
+});
+
+/* תמונות — מוקטנות ונשלחות בתוך ההודעה (חוצה משתמשים) */
+document.getElementById('imgBtn').addEventListener('click', function(){
+  if(!ACTIVE_SPACE){ toast('פתח/י שיחה כדי לשלוח תמונה'); return; }
+  document.getElementById('imgInput').click();
+});
+document.getElementById('imgInput').addEventListener('change', function(){
+  const f = this.files[0];
+  this.value = '';
+  if(f) processImageFile(f);
+});
+function processImageFile(file){
+  const img = new Image();
+  img.onload = function(){
+    const c = document.createElement('canvas');
+    const ctx = c.getContext('2d');
+    let out = null;
+    const sizes = [900, 640, 480, 380, 300, 240, 200, 160, 128];
+    const qs = [0.85, 0.7, 0.55, 0.4, 0.3];
+    for(const size of sizes){
+      const scale = Math.min(1, size / Math.max(img.width, img.height));
+      c.width = Math.round(img.width * scale);
+      c.height = Math.round(img.height * scale);
+      ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, c.width, c.height);
+      ctx.drawImage(img, 0, 0, c.width, c.height);
+      for(const q of qs){
+        const d = c.toDataURL('image/jpeg', q);
+        if(d.length <= MAX_IMG_CHARS){ out = d; break; }
+      }
+      if(out) break;
+    }
+    if(out){ sendMessage('[img:' + out + ']'); toast('התמונה נשלחה'); }
+    else toast('התמונה גדולה מדי לשליחה דרך השרת הנוכחי');
+  };
+  img.onerror = function(){ toast('קובץ התמונה לא נתמך'); };
+  img.src = URL.createObjectURL(file);
+}
+
+/* קבצים — נשלחת הודעת טקסט עם פרטי הקובץ (השרת הנוכחי לא תומך בהעלאת בינארי) */
+document.getElementById('fileBtn').addEventListener('click', function(){
+  if(!ACTIVE_SPACE){ toast('פתח/י שיחה כדי לצרף קובץ'); return; }
+  document.getElementById('fileInput').click();
+});
+document.getElementById('fileInput').addEventListener('change', function(){
+  const f = this.files[0];
+  this.value = '';
+  if(!f) return;
+  sendMessage('[קובץ: ' + f.name + ' · ' + fmtSize(f.size) + ']');
+  toast('פרטי הקובץ נשלחו כהודעה (העלאת קבצים מלאה דורשת שדרוג שרת)');
+});
+
+/* הקלטה קולית — מתנגנת אצל השולח במכשיר זה (זמינה בסשן הנוכחי) */
+let mediaStream = null, rec = null, recChunks = [], recStartAt = 0, recTick = null;
+document.getElementById('micBtn').addEventListener('click', startRecording);
+function startRecording(){
+  if(!ACTIVE_SPACE){ toast('פתח/י שיחה כדי להקליט'); return; }
+  if(!navigator.mediaDevices || !window.MediaRecorder){ toast('הקלטה לא נתמכת בדפדפן זה'); return; }
+  navigator.mediaDevices.getUserMedia({ audio:true }).then(function(stream){
+    mediaStream = stream;
+    const mime = ['audio/webm;codecs=opus','audio/webm','audio/mp4','audio/ogg;codecs=opus'].find(function(t){ return MediaRecorder.isTypeSupported(t); });
+    recChunks = [];
+    rec = new MediaRecorder(stream, mime ? { mimeType: mime } : undefined);
+    rec.ondataavailable = function(e){ if(e.data.size) recChunks.push(e.data); };
+    rec.onstop = finishRecording;
+    rec.start();
+    recStartAt = Date.now();
+    document.getElementById('composerBar').style.display = 'none';
+    document.getElementById('recBar').classList.add('on');
+    recTick = setInterval(function(){
+      const sec = Math.floor((Date.now() - recStartAt) / 1000);
+      document.getElementById('recTime').textContent = Math.floor(sec/60) + ':' + ('0'+(sec%60)).slice(-2);
+      if(sec >= 60) stopRecording(true);
+    }, 250);
+  }).catch(function(){ toast('אין הרשאת מיקרופון'); });
+}
+function stopRecording(send){
+  if(rec && rec.state !== 'inactive'){
+    rec._send = send;
+    rec.stop();
+  }
+}
+function finishRecording(){
+  clearInterval(recTick);
+  if(mediaStream){ mediaStream.getTracks().forEach(function(t){ t.stop(); }); mediaStream = null; }
+  document.getElementById('composerBar').style.display = 'flex';
+  document.getElementById('recBar').classList.remove('on');
+  const send = rec._send !== false;
+  const dur = Math.floor((Date.now() - recStartAt) / 1000);
+  rec = null;
+  if(!send || !recChunks.length) { toast('ההקלטה בוטלה'); return; }
+  const blob = new Blob(recChunks, { type: recChunks[0].type || 'audio/webm' });
+  const label = '[🎙 הודעה קולית · ' + Math.floor(dur/60) + ':' + ('0'+(dur%60)).slice(-2) + ' | מוצג במכשיר זה]';
+  const tempId = 'temp-'+Date.now()+'-a';
+  MEDIA[tempId] = URL.createObjectURL(blob);
+  sendMessageWithId(label, tempId);
+}
+function sendMessageWithId(text, tempId){
   if(!ACTIVE_SPACE) return;
-  const text = '@@IMG@@' + dataUrl;
-  const tempId = 'temp-'+Date.now()+'-'+Math.random().toString(36).slice(2,7);
   const optimistic = { messageId:tempId, spaceId:ACTIVE_SPACE, senderEmail:ME.email, senderName:ME.name, senderPicture:ME.picture, text:text, timestamp:Date.now(), pending:true };
   MESSAGES.push(optimistic);
   appendMessagesToDom([optimistic], true);
   const spaceAtSend = ACTIVE_SPACE;
   callApi('sendMessage', [{ spaceId:ACTIVE_SPACE, senderEmail:ME.email, senderName:ME.name, senderPicture:ME.picture, text:text }]).then(function(saved){
+    const idx = MESSAGES.findIndex(function(m){ return m.messageId === tempId; });
+    if(idx !== -1) MESSAGES[idx] = saved;
     if(ACTIVE_SPACE === spaceAtSend){ LAST_TS = Math.max(LAST_TS, saved.timestamp); replaceOptimisticMessage(tempId, saved); }
     refreshLists();
-  }).catch(function(err){
-    handleApiError(err);
-    if(ACTIVE_SPACE === spaceAtSend) removeOptimisticMessage(tempId);
+  }).catch(function(err){ handleApiError(err); removeOptimisticMessage(tempId); });
+}
+document.getElementById('recStop').addEventListener('click', function(){ stopRecording(true); });
+document.getElementById('recCancel').addEventListener('click', function(){ stopRecording(false); });
+
+/* ===================== HEADER BUTTONS ===================== */
+document.getElementById('btnMeet').addEventListener('click', function(){
+  window.open('https://meet.google.com/new', '_blank');
+  toast('נפתחה פגישת Meet חדשה');
+});
+document.getElementById('btnDensity').addEventListener('click', function(){
+  SS.prefs.density = SS.prefs.density === 'compact' ? 'comfortable' : 'compact';
+  lsSave(); applyDensity();
+  toast(SS.prefs.density === 'compact' ? 'מצב צפוף' : 'מצב נוח');
+});
+document.getElementById('btnChatSearch').addEventListener('click', function(){ openChatSearchPanel(); });
+document.getElementById('btnPinned').addEventListener('click', function(){ openPinnedPanel(); });
+document.getElementById('btnHistory').addEventListener('click', function(){ openHistoryPanel(); });
+document.getElementById('btnFiles').addEventListener('click', function(){ openFilesPanel(); });
+document.getElementById('btnKebab').addEventListener('click', function(e){ e.stopPropagation(); openSpaceMenu(this); });
+document.getElementById('chatTitles').addEventListener('click', function(){ openSpaceMenu(document.getElementById('btnKebab')); });
+
+function openSpaceMenu(anchor){
+  if(!ACTIVE_SPACE) return;
+  const s = SPACES.find(function(x){ return x.spaceId === ACTIVE_SPACE; });
+  const st = sState(ACTIVE_SPACE);
+  openMenu(anchor, [
+    { label:'פתיחה בחלון קופץ', icon:ICONS.popout, sub:'ניווט בשיחה בנפרד', fn:function(){ popoutSpace(ACTIVE_SPACE); } },
+    { label:'חיפוש בצ׳אט', icon:ICONS.search, fn:function(){ openChatSearchPanel(); } },
+    { sep:true },
+    { label:'מוצמדות', icon:ICONS.pin, sub:(SS.pinnedMsgs[ACTIVE_SPACE]||[]).length + ' הודעות מוצמדות', fn:function(){ openPinnedPanel(); } },
+    { label:'קבצים ותמונות', icon:ICONS.files, fn:function(){ openFilesPanel(); } },
+    { label:'ניווט לפי תאריך', icon:ICONS.history, fn:function(){ openHistoryPanel(); } },
+    { sep:true },
+    { label: st.pinned ? 'ביטול הצמדת שיחה' : 'הצמדת שיחה', icon:ICONS.pin, fn:function(){ togglePin(ACTIVE_SPACE); } },
+    { label: st.starred ? 'הסרת כוכב' : 'סימון בכוכב', icon:ICONS.star, fn:function(){ toggleStar(ACTIVE_SPACE); } },
+    { label:'סימון כלא נקרא', icon:ICONS.markUnread, fn:function(){ toggleMarkUnread(ACTIVE_SPACE); } },
+    { label:'השתקת התראות', icon:ICONS.mute, switchOn:!!st.muted, fn:function(){ toggleMute(ACTIVE_SPACE); } },
+    { label:'הסתרת השיחה מהרשימה', icon:ICONS.hide, fn:function(){ hideSpace(ACTIVE_SPACE); } },
+    { sep:true },
+    { label:'התראות מיידיות', icon:ICONS.bell, switchOn:!!(SS.prefs.notif && !st.muted), fn:function(){
+        if(st.muted){ toggleMute(ACTIVE_SPACE); return; }
+        document.getElementById('meMenu').classList.add('open');
+        document.querySelector('#meMenu .mi[data-mact="notif"]').click();
+      } },
+    { label:'העתקת קישור למרחב המשותף', icon:ICONS.link, fn:function(){ copySpaceLink(ACTIVE_SPACE); } },
+    { label:'מידע על השיחה', icon:ICONS.info, fn:function(){ openInfoPanel(s); } }
+  ]);
+}
+function openInfoPanel(s){
+  const st = SS.spaces[s.spaceId] || {};
+  openPanel('מידע על השיחה', '<div class="info-rows">' +
+    '<div class="info-row"><span>שם</span><b>'+escapeHtml(s.name||'ללא שם')+'</b></div>' +
+    '<div class="info-row"><span>סוג</span><b>'+TYPE_LABEL[s.type]+'</b></div>' +
+    '<div class="info-row"><span>חברים</span><b>'+ (s.memberCount || 1) +'</b></div>' +
+    '<div class="info-row"><span>מוצמדת</span><b>'+(st.pinned?'כן':'לא')+'</b></div>' +
+    '<div class="info-row"><span>מושתקת</span><b>'+(st.muted?'כן':'לא')+'</b></div>' +
+    '<div class="info-row"><span>הודעות נטענות</span><b>'+MESSAGES.length+'</b></div>' +
+  '</div>');
+}
+
+/* ===================== SIDE PANEL ===================== */
+function openPanel(title, bodyHtml){
+  document.getElementById('panelTitle').textContent = title;
+  const b = document.getElementById('panelBody');
+  if(typeof bodyHtml === 'string') b.innerHTML = bodyHtml;
+  else { b.innerHTML = ''; b.appendChild(bodyHtml); }
+  document.getElementById('sidePanel').classList.add('open');
+}
+function closePanel(){ document.getElementById('sidePanel').classList.remove('open'); }
+document.getElementById('panelClose').addEventListener('click', closePanel);
+
+function jumpToMsg(mid){
+  const el = document.querySelector('.msg-row[data-id="'+mid+'"]');
+  if(!el){ toast('ההודעה לא נטענה בתצוגה הנוכחית'); return; }
+  el.scrollIntoView({ block:'center', behavior:'smooth' });
+  el.classList.remove('flash'); void el.offsetWidth; el.classList.add('flash');
+}
+function jumpToDay(day){
+  const el = document.querySelector('.day-sep[data-day="'+day.replace(/"/g,'')+'"]');
+  if(!el){ toast('התאריך לא נטען בתצוגה'); return; }
+  el.scrollIntoView({ block:'start', behavior:'smooth' });
+}
+
+function openPinnedPanel(){
+  if(!ACTIVE_SPACE) return;
+  const ids = SS.pinnedMsgs[ACTIVE_SPACE] || [];
+  if(!ids.length){ openPanel('הודעות מוצמדות', '<div class="empty-msgs" style="padding:30px 0;text-align:center;color:var(--text-faint);">אין הודעות מוצמדות.<br>רחפו על הודעה ולחצו 📌 כדי להצמיד.</div>'); return; }
+  const html = ids.map(function(mid){
+    const m = MESSAGES.find(function(x){ return x.messageId === mid; });
+    if(!m) return '';
+    return '<div class="panel-item" data-jump="'+mid+'">' +
+      '<div class="conv-avatar" style="width:30px;height:30px;font-size:12px;background:'+colorFor(m.senderName||'?')+'">'+avatarNode(m.senderName, m.senderPicture)+'</div>' +
+      '<div class="pi-txt"><b>'+escapeHtml(m.senderName)+'</b> '+previewOf(m.text).slice(0,120)+'<small>'+relativeTimeLabel(m.timestamp)+'</small></div>' +
+      '<button class="pi-unpin" data-unpin="'+mid+'" title="ביטול הצמדה">✕</button>' +
+    '</div>';
+  }).join('');
+  openPanel('הודעות מוצמדות', html || '<div class="empty-msgs">ההודעות המוצמדות לא נטענו</div>');
+  document.getElementById('panelBody').querySelectorAll('[data-unpin]').forEach(function(b){
+    b.addEventListener('click', function(e){ e.stopPropagation(); toggleMsgPin(b.dataset.unpin); openPinnedPanel(); });
+  });
+  bindJumpItems();
+}
+function openHistoryPanel(){
+  if(!ACTIVE_SPACE) return;
+  const days = [];
+  MESSAGES.forEach(function(m){ const d = dayLabel(m.timestamp); if(days.indexOf(d) === -1) days.push(d); });
+  if(!days.length){ openPanel('ניווט לפי תאריך', '<div class="empty-msgs" style="padding:30px;text-align:center;color:var(--text-faint);">אין הודעות טעונות</div>'); return; }
+  const html = days.map(function(d){ return '<button class="day-chip" data-day="'+escapeHtml(d)+'">📅 '+d+'</button>'; }).join('') +
+    '<button class="day-chip" id="jumpTop">⏫ קפיצה לתחילת השיחה</button>';
+  openPanel('ניווט לפי תאריך', html);
+  document.getElementById('panelBody').querySelectorAll('[data-day]').forEach(function(b){
+    b.addEventListener('click', function(){ jumpToDay(b.dataset.day); closePanel(); });
+  });
+  const jt = document.getElementById('jumpTop');
+  if(jt) jt.addEventListener('click', function(){ document.getElementById('messagesEl').scrollTop = 0; closePanel(); });
+}
+function openFilesPanel(){
+  if(!ACTIVE_SPACE) return;
+  const items = [];
+  MESSAGES.forEach(function(m){
+    const t = m.text || '';
+    let thumb = '', txt = '';
+    if(t.indexOf('[img:') === 0){
+      const data = t.slice(5, t.lastIndexOf(']'));
+      if(/^data:image/.test(data)){ thumb = '<img class="pi-thumb" src="'+data+'">'; txt = '📷 תמונה'; }
+    } else if(t.indexOf('[🎙') === 0){ txt = escapeHtml(t.replace(/[\[\]]/g,'')); }
+    else if(t.indexOf('[קובץ:') === 0){ txt = '📄 ' + escapeHtml(t.slice(6, t.lastIndexOf(']'))); }
+    if(txt) items.push('<div class="panel-item" data-jump="'+m.messageId+'">' + (thumb||'') +
+      '<div class="pi-txt"><b>'+escapeHtml(m.senderName)+'</b> '+txt+'<small>'+relativeTimeLabel(m.timestamp)+'</small></div></div>');
+  });
+  openPanel('קבצים ותמונות', items.length ? items.join('') : '<div class="empty-msgs" style="padding:30px;text-align:center;color:var(--text-faint);">לא נמצאו קבצים או תמונות בהודעות שנטענו</div>');
+  bindJumpItems();
+}
+function openChatSearchPanel(){
+  if(!ACTIVE_SPACE) return;
+  const wrap = document.createElement('div');
+  wrap.innerHTML = '<input class="panel-search" id="chatSearchInput" placeholder="חיפוש בהודעות שנטענו…"><div id="chatSearchResults"></div>';
+  openPanel('חיפוש בצ׳אט', wrap);
+  const inp = wrap.querySelector('#chatSearchInput');
+  const res = wrap.querySelector('#chatSearchResults');
+  function doSearch(){
+    const q = inp.value.trim().toLowerCase();
+    SEARCH_Q = q;
+    if(!q){ res.innerHTML = ''; return; }
+    const hits = MESSAGES.filter(function(m){ return (m.text||'').toLowerCase().indexOf(q) !== -1; }).slice(-50).reverse();
+    res.innerHTML = hits.length ? hits.map(function(m){
+      const t = previewOf(m.text);
+      const i = t.toLowerCase().indexOf(q);
+      const snippet = escapeHtml(t.slice(Math.max(0, i-30), i+60));
+      return '<div class="panel-item" data-jump="'+m.messageId+'">' +
+        '<div class="conv-avatar" style="width:30px;height:30px;font-size:12px;background:'+colorFor(m.senderName||'?')+'">'+avatarNode(m.senderName, m.senderPicture)+'</div>' +
+        '<div class="pi-txt"><b>'+escapeHtml(m.senderName)+'</b> …'+snippet+'…<small>'+relativeTimeLabel(m.timestamp)+'</small></div></div>';
+    }).join('') : '<div class="empty-msgs" style="padding:24px;text-align:center;color:var(--text-faint);">לא נמצאו תוצאות</div>';
+    bindJumpItems();
+  }
+  inp.addEventListener('input', doSearch);
+  setTimeout(function(){ inp.focus(); }, 60);
+}
+function bindJumpItems(){
+  document.getElementById('panelBody').querySelectorAll('[data-jump]').forEach(function(n){
+    n.addEventListener('click', function(){ jumpToMsg(n.dataset.jump); });
   });
 }
 
-/* ===================== SEARCH (sidebar) ===================== */
+/* ===================== SEARCH (topbar) ===================== */
 document.getElementById('searchInput').addEventListener('input', function(e){
   const q = e.target.value.trim().toLowerCase();
+  SEARCH_Q = q;
   document.querySelectorAll('.conv-item').forEach(function(node){
-    const name = node.querySelector('.conv-name').textContent.toLowerCase();
+    const nameEl = node.querySelector('.conv-name');
+    const name = nameEl ? nameEl.textContent.toLowerCase() : '';
     node.style.display = (!q || name.indexOf(q) !== -1) ? 'flex' : 'none';
   });
 });
 
-/* ===================== CHAT HEADER: density / files / video / chevron / who ===================== */
-document.getElementById('densityBtn').addEventListener('click', function(){
-  const next = densityMode() === 'compact' ? 'cozy' : 'compact';
-  setDensityMode(next);
-  document.getElementById('messagesEl').classList.toggle('compact', next === 'compact');
-  document.getElementById('densityBtn').classList.toggle('is-active', next === 'compact');
-  showToast(next === 'compact' ? 'תצוגה צפופה הופעלה' : 'תצוגה רגילה הופעלה');
-});
-
-document.getElementById('filesBtn').addEventListener('click', function(e){
-  const imgs = MESSAGES.filter(function(m){ return isImageMessage(m.text); });
-  if(!imgs.length){ openPopover(e.currentTarget, [], {title:'תמונות בשיחה'}); return; }
-  openPopover(e.currentTarget, imgs.slice(-12).reverse().map(function(m){
-    return { label: (m.senderName||'') + ' · ' + timeLabel(m.timestamp), icon:'', onClick:function(){ scrollToMessage(m.messageId); } };
-  }), {title:'תמונות בשיחה'});
-});
-
-document.getElementById('videoCallBtn').addEventListener('click', function(){
-  window.open('https://meet.google.com/new', '_blank', 'noopener');
-  showToast('נפתח חלון ליצירת שיחת Meet — אפשר להדביק כאן את הקישור לחברי השיחה', {
-    actionLabel:'שליחת הזמנה', onAction:function(){ msgInput.value = (msgInput.value ? msgInput.value + '\n' : '') + '📹 בואו נדבר ב-Meet: '; msgInput.focus(); sendBtn.disabled = !msgInput.value.trim(); }
-  });
-});
-
-document.getElementById('chatWhoBtn').addEventListener('click', openConversationInfoModal);
-document.getElementById('chatChevronBtn').addEventListener('click', function(e){
+/* ===================== NEW CHAT MENU + MODAL ===================== */
+document.getElementById('newChatBtn').addEventListener('click', function(e){
   e.stopPropagation();
-  const s = SPACES.find(function(x){ return x.spaceId === ACTIVE_SPACE; });
-  if(!s) return;
-  const muted = isConvoMuted(s.spaceId);
-  const pinned = isConvoPinned(s.spaceId);
-  openPopover(e.currentTarget, [
-    { label:'פתיחה בחלון חדש', icon:svgIcon('external'), onClick:function(){ window.open(location.origin + location.pathname + '?space=' + encodeURIComponent(s.spaceId), '_blank'); } },
-    { label:'חיפוש בשיחה זו', icon:svgIcon('search'), onClick:openChatSearch },
-    { label:'פרטי שיחה', icon:svgIcon('info'), onClick:openConversationInfoModal },
-    { label:'העתקת קישור לשיחה', icon:svgIcon('copy'), onClick:function(){ copyConvLink(s.spaceId); } },
-    { sep:true },
-    { label: pinned ? 'ביטול הצמדה' : 'הצמדה למעלה', icon:svgIcon('pin'), onClick:function(){ toggleConvoPin(s.spaceId); renderSidebar(); } },
-    { label: muted ? 'ביטול השתקה' : 'השתקת התראות', icon:svgIcon('mute'), onClick:function(){ toggleConvoMute(s.spaceId); renderSidebar(); } },
-    { label:'סימון שיחה זו כנקראה', icon:svgIcon('check'), onClick:function(){ callApi('markRead',[s.spaceId, ME.email]).then(function(){ refreshLists(); }).catch(handleApiError); } },
-    { sep:true },
-    { label:'יציאה מהשיחה', icon:svgIcon('exit'), danger:true, onClick:function(){
-        showToast('יציאה מקבוצה/מרחב דורשת פעולת שרת שעדיין לא קיימת ב-Apps Script המחובר. אפשר להוסיף את זה אם תשתפו את קוד השרת.', {duration:7000});
-      } }
+  openMenu(this, [
+    { emoji:'💬', label:"צ'אט אישי חדש", fn:function(){ openModal('dm'); } },
+    { emoji:'👥', label:'קבוצה חדשה', fn:function(){ openModal('group'); } },
+    { emoji:'🌐', label:'מרחב חדש', fn:function(){ openModal('space'); } }
   ]);
 });
+document.querySelectorAll('.new-btn').forEach(function(btn){
+  btn.addEventListener('click', function(e){ e.stopPropagation(); openModal(btn.dataset.type); });
+});
+function openModal(type){
+  PENDING_TYPE = type;
+  SELECTED_MEMBERS = [];
+  document.getElementById('spaceNameInput').value = '';
+  document.getElementById('spaceDescInput').value = '';
+  document.getElementById('userSearchInput').value = '';
+  document.getElementById('userResults').style.display = 'none';
+  renderChips();
+  const isDm = type === 'dm';
+  document.getElementById('modalTitle').textContent = isDm ? 'צ׳אט אישי חדש' : (type === 'group' ? 'קבוצה חדשה' : 'מרחב חדש');
+  document.getElementById('nameField').style.display = isDm ? 'none' : 'block';
+  document.getElementById('descField').style.display = isDm ? 'none' : 'block';
+  document.getElementById('membersLabel').textContent = isDm ? 'חיפוש איש קשר' : 'הוספת חברים';
+  document.getElementById('createBtn').textContent = isDm ? 'פתיחת צ׳אט' : 'יצירה';
+  updateCreateBtn();
+  document.getElementById('modalOverlay').classList.add('open');
+}
+function closeModal(){ document.getElementById('modalOverlay').classList.remove('open'); }
+document.getElementById('modalClose').addEventListener('click', closeModal);
+document.getElementById('cancelBtn').addEventListener('click', closeModal);
+document.getElementById('modalOverlay').addEventListener('click', function(e){ if(e.target === this) closeModal(); });
 
-function openConversationInfoModal(){
-  const s = SPACES.find(function(x){ return x.spaceId === ACTIVE_SPACE; });
-  if(!s) return;
-  const body = document.getElementById('infoBody');
-  body.innerHTML =
-    '<div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;">' +
-      '<div class="conv-avatar" style="width:52px;height:52px;font-size:18px;background:'+colorFor(s.name||'?')+'">'+avatarNode(s.name,s.icon)+'</div>' +
-      '<div><div style="font-weight:700;font-size:16px;">'+escapeHtml(s.name||'ללא שם')+'</div><div style="font-size:12.5px;color:var(--text-dim);">'+TYPE_LABEL[s.type]+'</div></div>' +
-    '</div>' +
-    (s.description ? '<p class="hint">'+escapeHtml(s.description)+'</p>' : '') +
-    '<div class="info-row"><span>סוג</span><span>'+TYPE_LABEL[s.type]+'</span></div>' +
-    (s.type !== 'dm' ? '<div class="info-row"><span>חברים</span><span>'+(s.memberCount||'—')+'</span></div>' : '') +
-    '<div class="info-row"><span>עודכן לאחרונה</span><span>'+fullTimeLabel(s.updatedAt)+'</span></div>' +
-    '<p class="hint" style="margin-top:14px;">ניהול חברים ועריכת שם/תיאור דורשים נקודות קצה נוספות בשרת ה-Apps Script שאינן קיימות כרגע בחיבור הזה.</p>';
-  document.getElementById('infoOverlay').classList.add('open');
+const userSearchInput = document.getElementById('userSearchInput');
+let searchDebounce;
+userSearchInput.addEventListener('input', function(){
+  clearTimeout(searchDebounce);
+  const q = userSearchInput.value.trim();
+  searchDebounce = setTimeout(function(){
+    callApi('searchUsers', [q, ME.email]).then(function(users){
+      const filtered = users.filter(function(u){ return !SELECTED_MEMBERS.find(function(m){ return m.email === u.email; }); });
+      const el = document.getElementById('userResults');
+      if(filtered.length === 0){ el.style.display = 'none'; return; }
+      el.style.display = 'block';
+      el.innerHTML = filtered.map(function(u){
+        return '<div class="user-result" data-email="'+u.email+'" data-name="'+escapeHtml(u.name)+'" data-picture="'+escapeHtml(u.picture||'')+'">' +
+          '<div class="conv-avatar" style="background:'+colorFor(u.name)+'">'+avatarNode(u.name,u.picture)+'</div>' +
+          '<div><div class="nm">'+escapeHtml(u.name)+'</div><div class="em">'+escapeHtml(u.email)+'</div></div>' +
+        '</div>';
+      }).join('');
+      el.querySelectorAll('.user-result').forEach(function(node){
+        node.addEventListener('click', function(){
+          if(PENDING_TYPE === 'dm'){
+            SELECTED_MEMBERS = [{email:node.dataset.email, name:node.dataset.name, picture:node.dataset.picture}];
+          } else if(!SELECTED_MEMBERS.find(function(m){ return m.email === node.dataset.email; })){
+            SELECTED_MEMBERS.push({email:node.dataset.email, name:node.dataset.name, picture:node.dataset.picture});
+          }
+          userSearchInput.value = '';
+          el.style.display = 'none';
+          renderChips();
+          updateCreateBtn();
+        });
+      });
+    }).catch(handleApiError);
+  }, 200);
+});
+function renderChips(){
+  const el = document.getElementById('selectedChips');
+  el.innerHTML = SELECTED_MEMBERS.map(function(m){
+    return '<span class="chip">'+escapeHtml(m.name)+
+      '<button data-email="'+m.email+'"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M18 6L6 18M6 6l12 12"/></svg></button></span>';
+  }).join('');
+  el.querySelectorAll('button').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      SELECTED_MEMBERS = SELECTED_MEMBERS.filter(function(m){ return m.email !== btn.dataset.email; });
+      renderChips();
+      updateCreateBtn();
+    });
+  });
 }
-document.getElementById('infoClose').addEventListener('click', closeInfoModal);
-document.getElementById('infoCloseBtn').addEventListener('click', closeInfoModal);
-function closeInfoModal(){ document.getElementById('infoOverlay').classList.remove('open'); }
+function updateCreateBtn(){
+  const nameOk = PENDING_TYPE === 'dm' || document.getElementById('spaceNameInput').value.trim().length > 0;
+  document.getElementById('createBtn').disabled = SELECTED_MEMBERS.length === 0 || !nameOk;
+}
+document.getElementById('spaceNameInput').addEventListener('input', updateCreateBtn);
+document.getElementById('createBtn').addEventListener('click', function(){
+  const payload = {
+    type: PENDING_TYPE,
+    creatorEmail: ME.email,
+    memberEmails: SELECTED_MEMBERS.map(function(m){ return m.email; }),
+    name: PENDING_TYPE === 'dm' ? '' : document.getElementById('spaceNameInput').value.trim(),
+    description: PENDING_TYPE === 'dm' ? '' : document.getElementById('spaceDescInput').value.trim()
+  };
+  document.getElementById('createBtn').disabled = true;
+  callApi('createSpace', [payload]).then(function(space){
+    closeModal();
+    refreshListsThenOpen(space.spaceId);
+  }).catch(function(err){
+    handleApiError(err);
+    document.getElementById('createBtn').disabled = false;
+  });
+});
+function refreshListsThenOpen(spaceId){
+  callApi('getBootstrap', [ME.email]).then(function(list){
+    SPACES = list;
+    renderSidebar();
+    openSpace(spaceId);
+  }).catch(handleApiError);
+}
 
-/* ===================== SEARCH IN CHAT ===================== */
-function openChatSearch(){
-  document.getElementById('searchBar').classList.add('open');
-  document.getElementById('chatSearchInput').value = '';
-  document.getElementById('chatSearchInput').focus();
-  document.getElementById('searchCount').textContent = '';
-  document.getElementById('searchChatBtn').classList.add('is-active');
-}
-function closeChatSearch(silent){
-  document.getElementById('searchBar').classList.remove('open');
-  document.getElementById('searchChatBtn').classList.remove('is-active');
-  clearSearchHighlights();
-  if(!silent) msgInput.focus();
-}
-document.getElementById('searchChatBtn').addEventListener('click', function(){
-  if(document.getElementById('searchBar').classList.contains('open')) closeChatSearch();
-  else openChatSearch();
-});
-document.getElementById('searchCloseBtn').addEventListener('click', function(){ closeChatSearch(); });
-function clearSearchHighlights(){
-  document.querySelectorAll('.msg-row-wrap.search-hit,.msg-row-wrap.search-current').forEach(function(n){
-    n.classList.remove('search-hit','search-current');
-  });
-  SEARCH_MATCHES = []; SEARCH_INDEX = -1;
-}
-document.getElementById('chatSearchInput').addEventListener('input', function(e){
-  const q = e.target.value.trim().toLowerCase();
-  clearSearchHighlights();
-  if(!q){ document.getElementById('searchCount').textContent=''; return; }
-  SEARCH_MATCHES = MESSAGES.filter(function(m){ return !isImageMessage(m.text) && m.text.toLowerCase().indexOf(q) !== -1; }).map(function(m){ return m.messageId; });
-  SEARCH_MATCHES.forEach(function(id){
-    const n = document.querySelector('.msg-row-wrap[data-id="'+id+'"]');
-    if(n) n.classList.add('search-hit');
-  });
-  if(SEARCH_MATCHES.length){ SEARCH_INDEX = SEARCH_MATCHES.length - 1; focusSearchMatch(); }
-  else { document.getElementById('searchCount').textContent = '0/0'; }
-});
-function focusSearchMatch(){
-  document.querySelectorAll('.msg-row-wrap.search-current').forEach(function(n){ n.classList.remove('search-current'); });
-  const id = SEARCH_MATCHES[SEARCH_INDEX];
-  const n = document.querySelector('.msg-row-wrap[data-id="'+id+'"]');
-  if(n){ n.classList.add('search-current'); n.scrollIntoView({behavior:'smooth', block:'center'}); }
-  document.getElementById('searchCount').textContent = (SEARCH_INDEX+1) + '/' + SEARCH_MATCHES.length;
-}
-document.getElementById('searchNextBtn').addEventListener('click', function(){
-  if(!SEARCH_MATCHES.length) return;
-  SEARCH_INDEX = (SEARCH_INDEX + 1) % SEARCH_MATCHES.length;
-  focusSearchMatch();
-});
-document.getElementById('searchPrevBtn').addEventListener('click', function(){
-  if(!SEARCH_MATCHES.length) return;
-  SEARCH_INDEX = (SEARCH_INDEX - 1 + SEARCH_MATCHES.length) % SEARCH_MATCHES.length;
-  focusSearchMatch();
-});
+/* ===================== ICONS ===================== */
+const ICONS = {
+  popout:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><path d="M15 3h6v6"/><path d="M10 14L21 3"/></svg>',
+  chat:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 5h16a1 1 0 011 1v9a1 1 0 01-1 1H9l-5 4v-4H4a1 1 0 01-1-1V6a1 1 0 011-1z"/></svg>',
+  pin:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 17v5M8 3h8l-1 6 3 3v2H6v-2l3-3-1-6z"/></svg>',
+  star:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3.1 6.3 6.9 1-5 4.9 1.2 6.8-6.2-3.2-6.2 3.2L7 14.2 2 9.3l6.9-1z"/></svg>',
+  markUnread:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 5h16a1 1 0 011 1v9a1 1 0 01-1 1H9l-5 4v-4H4a1 1 0 01-1-1V6a1 1 0 011-1z"/><circle cx="18" cy="6" r="3" fill="#D93025" stroke="none"/></svg>',
+  mute:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8a6 6 0 10-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M2 2l20 20"/></svg>',
+  hide:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18.4 6.6a9 9 0 11-12.8 0"/><path d="M12 2v10"/></svg>',
+  link:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 007.5.5l3-3a5 5 0 00-7-7l-1.7 1.7"/><path d="M14 11a5 5 0 00-7.5-.5l-3 3a5 5 0 007 7l1.7-1.7"/></svg>',
+  search:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>',
+  files:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 7a2 2 0 012-2h4l2 2h8a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2V7z"/></svg>',
+  history:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>',
+  bell:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8a6 6 0 10-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 01-3.4 0"/></svg>',
+  info:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 16v-4M12 8h.01"/></svg>'
+};
+</script>
+</body>
+</html>
